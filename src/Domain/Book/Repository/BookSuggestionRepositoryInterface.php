@@ -1,0 +1,24 @@
+<?php
+declare(strict_types=1);
+
+namespace Dinargab\LibraryBot\Domain\Book\Repository;
+
+use Dinargab\LibraryBot\Domain\Book\Entity\BookSuggestion;
+
+interface BookSuggestionRepositoryInterface
+{
+    public function findById(string $id): ?BookSuggestion;
+
+    /** @return BookSuggestion[] */
+    public function findPending(): array;
+
+    /** @return BookSuggestion[] */
+    public function findByUser(User $user): array;
+
+    /** @return BookSuggestion[] */
+    public function findAll(): array;
+
+    public function save(BookSuggestion $suggestion): void;
+
+    public function delete(BookSuggestion $suggestion): void;
+}

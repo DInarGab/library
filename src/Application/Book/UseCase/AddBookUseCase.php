@@ -1,0 +1,45 @@
+<?php
+declare(strict_types=1);
+
+namespace Dinargab\LibraryBot\Application\Book\UseCase;
+
+use Dinargab\LibraryBot\Application\Book\DTO\AddBookRequestDTO;
+use Dinargab\LibraryBot\Application\Shared\DTO\BookDTO;
+use Dinargab\LibraryBot\Domain\Book\Entity\BookCopy;
+use Dinargab\LibraryBot\Domain\Book\Factory\BookCopyFactoryInterface;
+use Dinargab\LibraryBot\Domain\Book\Factory\BookFactoryInterface;
+use Dinargab\LibraryBot\Domain\Book\Repository\BookCopyRepositoryInterface;
+use Dinargab\LibraryBot\Domain\Book\Repository\BookRepositoryInterface;
+
+class AddBookUseCase
+{
+    public function __construct(
+        private BookRepositoryInterface $bookRepository,
+        private BookCopyRepositoryInterface $bookCopyRepository,
+        private BookFactoryInterface $bookFactory,
+        private BookCopyFactoryInterface $bookCopyFactory,
+    ) {}
+
+    public function __invoke(
+        AddBookRequestDTO $addBookRequestDTO,
+    ): BookDTO {
+        $book = $this->bookFactory->create(
+            title: $addBookRequestDTO->title,
+            author: $addBookRequestDTO->author,
+            isbn: $addBookRequestDTO->isbn,
+            description: $addBookRequestDTO->description,
+            coverUrl: $addBookRequestDTO->coverUrl
+        );
+
+        $this->bookRepository->save($book);
+
+        for ($i = 0; $i < $addBookRequestDTO->copies; $i++) {
+            $inventoryNumber = $this->bookCopyRepository->generateInventoryNumber();
+            $bookCopy = new BookCopy($book, $inventoryNumber);
+            $book->addCopy($bookCopy);
+            $this->bookCopyRepository->save($bookCopy);
+        }
+
+        return BookDTO::fromEntity($book);
+    }
+}
