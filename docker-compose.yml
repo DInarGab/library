@@ -25,7 +25,7 @@ services:
     depends_on:
       - postgres
     environment:
-      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - TELEGRAM_TOKEN=${TELEGRAM_TOKEN}
       - TELEGRAM_BOT_USERNAME=${TELEGRAM_BOT_USERNAME}
       - TELEGRAM_ADMIN_ID=${TELEGRAM_ADMIN_ID}
       - DATABASE_URL=pgsql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
@@ -60,7 +60,7 @@ services:
 #      - postgres
 #    command: php bin/worker notification:process
 #    environment:
-#      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+#      - TELEGRAM_TOKEN=${TELEGRAM_TOKEN}
 #      - DATABASE_URL=pgsql://library:library@postgres:5432/library
 #      - RABBITMQ_HOST=rabbitmq
 #      - RABBITMQ_PORT=5672

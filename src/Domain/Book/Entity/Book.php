@@ -33,7 +33,7 @@ class Book
     private DateTimeImmutable $createdAt;
 
     /** @var Collection<int, BookCopy> */
-    #[ORM\OneToMany(mappedBy: 'book', targetEntity: BookCopy::class)]
+    #[ORM\OneToMany(mappedBy: 'book', targetEntity: BookCopy::class, cascade: ['remove'])]
     private Collection $copies;
 
     public function __construct(

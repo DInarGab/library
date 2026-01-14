@@ -11,7 +11,6 @@ class ReturnBookUseCase
 {
     public function __construct(
         private LendingRepositoryInterface $lendingRepository,
-//        private EventDispatcher $eventDispatcher
     ) {}
 
     public function __invoke(

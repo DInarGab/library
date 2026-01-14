@@ -6,9 +6,10 @@ namespace Dinargab\LibraryBot\Domain\User\Entity;
 use DateTimeImmutable;
 use Dinargab\LibraryBot\Domain\User\ValueObject\TelegramId;
 use Dinargab\LibraryBot\Domain\User\ValueObject\UserRole;
+use Dinargab\LibraryBot\Infrastructure\Persistence\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-
+#[ORM\Table(name: "bot_user")]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 class User
 {
@@ -26,7 +27,7 @@ class User
     private ?string $firstName;
     #[ORM\Column(type: 'string', length: 255, name: 'last_name', nullable: true)]
     private ?string $lastName;
-    #[ORM\Column(type: 'string', length: 20)]
+    #[ORM\Column(type: 'string', length: 20, enumType: UserRole::class)]
     private UserRole $role;
 
     #[ORM\Column(type: 'datetime_immutable', name: "created_at", nullable: false)]

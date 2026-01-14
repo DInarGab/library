@@ -7,8 +7,10 @@ use DateTimeImmutable;
 use Dinargab\LibraryBot\Domain\Book\Entity\BookCopy;
 use Dinargab\LibraryBot\Domain\Lending\ValueObject\LendingStatus;
 use Dinargab\LibraryBot\Domain\User\Entity\User;
+use Dinargab\LibraryBot\Infrastructure\Persistence\Repository\LendingRepository;
 use Doctrine\ORM\Mapping as ORM;
 
+#[ORM\Entity(repositoryClass: LendingRepository::class)]
 class Lending
 {
     private const DEFAULT_LENDING_DAYS = 14;
@@ -30,7 +32,7 @@ class Lending
     private DateTimeImmutable $dueDate;
     #[ORM\Column(type: 'datetime_immutable', nullable: false, name: 'returned_at')]
     private ?DateTimeImmutable $returnedAt;
-    #[ORM\Column(type: 'string', nullable: false, length: 20)]
+    #[ORM\Column(type: 'string', nullable: false, length: 20, enumType: LendingStatus::class)]
     private LendingStatus $status;
 
     #[ORM\Column(type: 'datetime_immutable', name: "created_at", nullable: false)]

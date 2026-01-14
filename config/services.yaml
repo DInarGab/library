@@ -18,11 +18,15 @@ services:
     # this creates a service per class whose id is the fully-qualified class name
     Dinargab\LibraryBot\:
         resource: '../src/'
+#        public: true
+        exclude:
+            - '../src/Infrastructure/Bot/'
     # Nutgram handlers
     Dinargab\LibraryBot\Infrastructure\Bot\:
         public: true
+        autowire: true
         shared: false
-        resource: '../src/Infrastructure/Bot'
+        resource: '../src/Infrastructure/Bot/'
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

@@ -26,6 +26,7 @@ class GetOrCreateUserUseCase
                 username: $getOrCreateUserDTO->username,
                 firstName: $getOrCreateUserDTO->firstName,
                 lastName: $getOrCreateUserDTO->lastName,
+                isAdmin: $getOrCreateUserDTO->isAdmin,
             );
 
             $this->userRepository->save($user);

@@ -10,10 +10,10 @@ interface BookRepositoryInterface
     public function findById(int $id): ?Book;
 
     /** @return Book[] */
-    public function findAll(): array;
+    public function findAll(int $page = 1, int $limit = 10): array;
 
     /** @return Book[] */
-    public function findAvailable(): array;
+    public function findAvailable(int $page = 1, int $limit = 10): array;
 
     /** @return Book[] */
     public function findAddedAfter(\DateTimeImmutable $date): array;

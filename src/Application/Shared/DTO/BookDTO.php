@@ -24,7 +24,7 @@ class BookDTO
             id: $book->getId() ?? 0,
             title: $book->getTitle(),
             author: $book->getAuthor(),
-            isbn: $book->getIsbn(),
+            isbn: $book->getIsbn()->getValue(),
             description: $book->getDescription(),
             coverUrl: $book->getCoverUrl(),
             availableCopies: $book->getAvailableCopiesCount(),
