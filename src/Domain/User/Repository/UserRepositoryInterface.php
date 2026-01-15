@@ -11,7 +11,7 @@ interface UserRepositoryInterface
 
     public function findByTelegramId(int $telegramId): ?User;
 
-    public function findAll(): array;
+    public function findAll(int $page = 1, int $limit = 10): array;
 
     public function save(User $user): void;
 

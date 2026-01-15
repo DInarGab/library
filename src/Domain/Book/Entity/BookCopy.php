@@ -5,6 +5,7 @@ namespace Dinargab\LibraryBot\Domain\Book\Entity;
 
 use DateTimeImmutable;
 use Dinargab\LibraryBot\Domain\Book\ValueObject\BookStatus;
+use Dinargab\LibraryBot\Infrastructure\Persistence\Repository\BookCopyRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 
@@ -66,6 +67,16 @@ class BookCopy
     public function getCreatedAt(): DateTimeImmutable
     {
         return $this->createdAt;
+    }
+
+    public function markAsBorrowed()
+    {
+        $this->status = BookStatus::BORROWED;
+    }
+
+    public function markAsAvailable()
+    {
+        $this->status = BookStatus::AVAILABLE;
     }
 
 }

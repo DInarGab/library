@@ -11,6 +11,7 @@ class GetOrCreateUserRequestDTO
         public readonly ?string $firstName = null,
         public readonly ?string $lastName = null,
         public readonly ?bool $isAdmin = false,
+        public readonly ?bool $dontCreateOnFail = false,
     )
     {
 

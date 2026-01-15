@@ -30,7 +30,7 @@ class Lending
     private DateTimeImmutable $issuedAt;
     #[ORM\Column(type: 'datetime_immutable', nullable: false, name: 'due_date')]
     private DateTimeImmutable $dueDate;
-    #[ORM\Column(type: 'datetime_immutable', nullable: false, name: 'returned_at')]
+    #[ORM\Column(type: 'datetime_immutable', nullable: true, name: 'returned_at')]
     private ?DateTimeImmutable $returnedAt;
     #[ORM\Column(type: 'string', nullable: false, length: 20, enumType: LendingStatus::class)]
     private LendingStatus $status;
@@ -49,9 +49,8 @@ class Lending
         $this->issuedAt = new DateTimeImmutable();
         $this->dueDate = $dueDate ?? $this->issuedAt->modify('+' . self::DEFAULT_LENDING_DAYS . ' days');
         $this->returnedAt = null;
-        $this->status = LendingStatus::ACTIVE;
+        $this->status = LendingStatus::AVAILABLE;
         $this->createdAt = new DateTimeImmutable();
-
     }
 
     public function getId(): string
@@ -91,7 +90,7 @@ class Lending
 
     public function isActive(): bool
     {
-        return $this->status->isActive();
+        return $this->status->isLent();
     }
 
     public function isOverdue(): bool
@@ -119,12 +118,11 @@ class Lending
 
         $this->returnedAt = new DateTimeImmutable();
         $this->status = LendingStatus::RETURNED;
-
     }
 
     public function markAsOverdue(): void
     {
-        if ($this->status !== LendingStatus::ACTIVE) {
+        if ($this->status !== LendingStatus::LENT) {
             return;
         }
 

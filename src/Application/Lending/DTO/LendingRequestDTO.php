@@ -7,7 +7,7 @@ class LendingRequestDTO
 {
     public function __construct(
         public readonly int $bookId,
-        public readonly int $userTelegramId,
+        public readonly int $userId,
         public readonly ?int $daysToReturn = null
     )
     {

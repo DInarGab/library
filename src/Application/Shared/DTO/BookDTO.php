@@ -15,7 +15,8 @@ class BookDTO
         public ?string $description,
         public ?string $coverUrl,
         public int $availableCopies,
-        public string $createdAt
+        public string $createdAt,
+        public ?int $firstAvailableCopyId,
     ) {}
 
     public static function fromEntity(Book $book): self
@@ -28,7 +29,8 @@ class BookDTO
             description: $book->getDescription(),
             coverUrl: $book->getCoverUrl(),
             availableCopies: $book->getAvailableCopiesCount(),
-            createdAt: $book->getCreatedAt()->format('Y-m-d H:i:s')
+            createdAt: $book->getCreatedAt()->format('Y-m-d H:i:s'),
+            firstAvailableCopyId: $book->getFirstAvailableCopy()?->getId(),
         );
     }
 

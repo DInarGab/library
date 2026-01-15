@@ -3,6 +3,7 @@
 
 use Dinargab\LibraryBot\Infrastructure\Bot\Commands\Admin\AddBookCommand;
 use Dinargab\LibraryBot\Infrastructure\Bot\Commands\Admin\DeleteBookCommand;
+use Dinargab\LibraryBot\Infrastructure\Bot\Commands\Admin\LendBookCommand;
 use Dinargab\LibraryBot\Infrastructure\Bot\Commands\BookDetailPageCommand;
 use Dinargab\LibraryBot\Infrastructure\Bot\Commands\ListBooksCommand;
 use Dinargab\LibraryBot\Infrastructure\Bot\Commands\StartCommand;
@@ -27,6 +28,7 @@ $bot->onCallbackQueryData(ListBooksCommand::PAGINATION_PREFIX . ':{page}', ListB
 $bot->group(function ($bot) {
     $bot->onCommand('add_book', AddBookCommand::class);
     $bot->onCallbackQueryData('delete_book:{bookId}', DeleteBookCommand::class);
+    $bot->onCallbackQueryData(LendBookCommand::CALLBACK_PREFIX . ':{bookId}', LendBookCommand::class);
 
 })->middleware(AdminMiddleware::class);
 

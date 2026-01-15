@@ -64,7 +64,6 @@ class BookDetailPageCommand
 
         return $this->paginationKeyboardService->createNavigationKeyboard(
             backCallback: ListBooksCommand::PAGINATION_PREFIX . ":1",
-            closeCallback: 'close',
             additionalButtons: $additionalButton
         );
     }

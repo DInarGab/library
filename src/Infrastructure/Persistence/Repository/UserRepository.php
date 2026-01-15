@@ -28,9 +28,19 @@ class UserRepository extends ServiceEntityRepository implements UserRepositoryIn
         return $this->findOneBy(['telegramId.value' => $telegramId]);
     }
 
-    public function findAll(): array
+    public function findAll(int $page = 1, int $limit = 10): array
     {
-        return $this->findBy([], ['createdAt' => 'ASC']);
+        return $this->createQueryBuilder('user')
+            ->setFirstResult(($page - 1) * $limit)
+            ->orderBy("user.id", "DESC")
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function getCount(): int
+    {
+        return $this->count();
     }
 
     public function save(User $user): void
