@@ -49,7 +49,7 @@ class Lending
         $this->issuedAt = new DateTimeImmutable();
         $this->dueDate = $dueDate ?? $this->issuedAt->modify('+' . self::DEFAULT_LENDING_DAYS . ' days');
         $this->returnedAt = null;
-        $this->status = LendingStatus::AVAILABLE;
+        $this->status = LendingStatus::LENT;
         $this->createdAt = new DateTimeImmutable();
     }
 
@@ -122,20 +122,10 @@ class Lending
 
     public function markAsOverdue(): void
     {
-        if ($this->status !== LendingStatus::LENT) {
+        if ($this->status !== LendingStatus::RETURNED) {
             return;
         }
 
         $this->status = LendingStatus::OVERDUE;
     }
-
-    public function extendDueDate(int $days): void
-    {
-        if (!$this->isActive()) {
-            throw new \DomainException('Cannot extend inactive lending');
-        }
-
-        $this->dueDate = $this->dueDate->modify("+{$days} days");
-    }
-
 }

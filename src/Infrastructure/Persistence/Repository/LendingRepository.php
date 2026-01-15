@@ -3,12 +3,12 @@ declare(strict_types=1);
 
 namespace Dinargab\LibraryBot\Infrastructure\Persistence\Repository;
 
+use DateTimeImmutable;
 use Dinargab\LibraryBot\Domain\Book\Entity\BookCopy;
 use Dinargab\LibraryBot\Domain\Lending\Entity\Lending;
 use Dinargab\LibraryBot\Domain\Lending\Repository\LendingRepositoryInterface;
 use Dinargab\LibraryBot\Domain\User\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 
 class LendingRepository extends ServiceEntityRepository implements LendingRepositoryInterface
@@ -54,7 +54,7 @@ class LendingRepository extends ServiceEntityRepository implements LendingReposi
 
     public function findOverdue(): array
     {
-        $now = new \DateTimeImmutable();
+        $now = new DateTimeImmutable();
 
         return $this->createQueryBuilder('lending')
             ->andWhere('lending.dueDate < :now')
@@ -69,16 +69,16 @@ class LendingRepository extends ServiceEntityRepository implements LendingReposi
 
     public function findDueSoon(int $days = 3): array
     {
-        $now = new \DateTimeImmutable();
+        $now = new DateTimeImmutable();
         $futureDate = $now->modify("+{$days} days");
 
         return $this->createQueryBuilder('lending')
             ->andWhere('lending.dueDate BETWEEN :now AND :future')
             ->andWhere('lending.returnedAt IS NULL')
-            ->andWhere('lending.status = :active')
+            ->andWhere('lending.status = :status')
             ->setParameter('now', $now)
             ->setParameter('future', $futureDate)
-            ->setParameter('active', 'active')
+            ->setParameter('status', 'borrowed')
             ->orderBy('lending.dueDate', 'ASC')
             ->getQuery()
             ->getResult();
@@ -86,23 +86,33 @@ class LendingRepository extends ServiceEntityRepository implements LendingReposi
 
     public function findNeedingReminder(): array
     {
-        $now = new \DateTimeImmutable();
+        $now = new DateTimeImmutable();
         $tomorrow = $now->modify('+1 day');
 
         return $this->createQueryBuilder('lending')
             ->andWhere('lending.dueDate BETWEEN :now AND :tomorrow')
             ->andWhere('lending.returnedAt IS NULL')
-            ->andWhere('lending.status = :active')
+            ->andWhere('lending.status = :status')
             ->setParameter('now', $now)
             ->setParameter('tomorrow', $tomorrow)
-            ->setParameter('active', 'active')
+            ->setParameter('status', 'borrowed')
             ->getQuery()
             ->getResult();
     }
 
-    public function findAll(): array
+    public function findAll(int $page = 1, int $limit = 10, ?int $userId = null): array
     {
-        return $this->findBy([], ['issuedAt' => 'DESC']);
+        $queryBuilder = $this->createQueryBuilder('lending')
+            ->setMaxResults($limit)
+            ->setFirstResult(($page - 1) * $limit);
+        if ($userId !== null) {
+            $queryBuilder->andWhere('lending.user = :userId')
+                ->setParameter('userId', $userId);
+        }
+
+        return $queryBuilder
+            ->getQuery()
+            ->getResult();
     }
 
     public function save(Lending $lending): void
@@ -115,5 +125,10 @@ class LendingRepository extends ServiceEntityRepository implements LendingReposi
     {
         $this->getEntityManager()->remove($lending);
         $this->getEntityManager()->flush();
+    }
+
+    public function countAll(): int
+    {
+        return $this->count([]);
     }
 }

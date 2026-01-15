@@ -31,11 +31,11 @@ class StartCommand
             )
         );
 
-        $text = "👋 Привет, *{$registeredUser->getDisplayName()}*!\n\n";
+        $text = "👋 Привет, *{$registeredUser->displayName}*!\n\n";
         $text .= "Добро пожаловать в библиотечного бота! 📚\n\n";
         $text .= "Используйте меню ниже или команду /help";
 
-        $keyboard = $this->keyboardFactory->create($registeredUser->isAdmin() ? KeyboardTypeEnum::ADMIN : KeyboardTypeEnum::COMMON);
+        $keyboard = $this->keyboardFactory->create($registeredUser->isAdmin ? KeyboardTypeEnum::ADMIN : KeyboardTypeEnum::COMMON);
 
         $bot->sendMessage(
             text: $text,

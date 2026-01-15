@@ -4,8 +4,11 @@
 use Dinargab\LibraryBot\Infrastructure\Bot\Commands\Admin\AddBookCommand;
 use Dinargab\LibraryBot\Infrastructure\Bot\Commands\Admin\DeleteBookCommand;
 use Dinargab\LibraryBot\Infrastructure\Bot\Commands\Admin\LendBookCommand;
+use Dinargab\LibraryBot\Infrastructure\Bot\Commands\Admin\ReturnBookCommand;
 use Dinargab\LibraryBot\Infrastructure\Bot\Commands\BookDetailPageCommand;
+use Dinargab\LibraryBot\Infrastructure\Bot\Commands\LendingsDetailPageCommand;
 use Dinargab\LibraryBot\Infrastructure\Bot\Commands\ListBooksCommand;
+use Dinargab\LibraryBot\Infrastructure\Bot\Commands\ListLendingsCommand;
 use Dinargab\LibraryBot\Infrastructure\Bot\Commands\StartCommand;
 use Dinargab\LibraryBot\Infrastructure\Bot\Middlewares\AdminMiddleware;
 use Dinargab\LibraryBot\Infrastructure\Bot\Middlewares\UserAuthMiddleware;
@@ -20,16 +23,22 @@ Conversation::refreshOnDeserialize();
 //})->description('The start command!');
 $bot->middleware(UserAuthMiddleware::class);
 $bot->onCommand('start', StartCommand::class);
-$bot->onCommand('list_books', ListBooksCommand::class);
 
+//Список книг и описание книги
+$bot->onCommand('list_books', ListBooksCommand::class);
 $bot->onCallbackQueryData('book_detail:{bookId}', BookDetailPageCommand::class);
 $bot->onCallbackQueryData(ListBooksCommand::PAGINATION_PREFIX . ':{page}', ListBooksCommand::class);
+$bot->onCallbackQueryData('lending_detail:{lendingId}', LendingsDetailPageCommand::class);
+//Список выдач книг и описание выдач
+$bot->onCommand(ListLendingsCommand::PAGINATION_PREFIX, ListLendingsCommand::class);
+$bot->onCallbackQueryData(ListLendingsCommand::PAGINATION_PREFIX . ':{page}', ListLendingsCommand::class);
 
 $bot->group(function ($bot) {
     $bot->onCommand('add_book', AddBookCommand::class);
+
     $bot->onCallbackQueryData('delete_book:{bookId}', DeleteBookCommand::class);
     $bot->onCallbackQueryData(LendBookCommand::CALLBACK_PREFIX . ':{bookId}', LendBookCommand::class);
-
+    $bot->onCallbackQueryData(ReturnBookCommand::RETURN_BOOK_PREFIX . ":{lendingId}", ReturnBookCommand::class);
 })->middleware(AdminMiddleware::class);
 
 $bot->onCallbackQueryData('close', function (Nutgram $bot) {

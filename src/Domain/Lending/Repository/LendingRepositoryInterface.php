@@ -35,4 +35,6 @@ interface LendingRepositoryInterface
 
     public function remove(Lending $lending): void;
 
+    public function countAll(): int;
+
 }

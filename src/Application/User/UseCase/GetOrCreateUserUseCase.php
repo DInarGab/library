@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Dinargab\LibraryBot\Application\User\UseCase;
 
+use Dinargab\LibraryBot\Application\Shared\DTO\UserDTO;
 use Dinargab\LibraryBot\Application\User\DTO\GetOrCreateUserRequestDTO;
 use Dinargab\LibraryBot\Domain\User\Entity\User;
 use Dinargab\LibraryBot\Domain\User\Factory\UserFactoryInterface;
@@ -17,7 +18,7 @@ class GetOrCreateUserUseCase
 
     public function __invoke(
         GetOrCreateUserRequestDTO $getOrCreateUserDTO,
-    ): User {
+    ): UserDTO {
         $user = $this->userRepository->findByTelegramId($getOrCreateUserDTO->telegramId);
 
         if ($user === null) {
@@ -32,6 +33,6 @@ class GetOrCreateUserUseCase
             $this->userRepository->save($user);
         }
 
-        return $user;
+        return UserDTO::fromEntity($user);
     }
 }

@@ -18,7 +18,7 @@ enum LendingStatus: string
 
     public function canBeReturned(): bool
     {
-        return $this === self::ACTIVE || $this === self::OVERDUE;
+        return $this === self::LENT;
     }
 
     public function getLabel(): string

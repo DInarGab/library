@@ -33,5 +33,4 @@ class BookDTO
             firstAvailableCopyId: $book->getFirstAvailableCopy()?->getId(),
         );
     }
-
 }

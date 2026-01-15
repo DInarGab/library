@@ -6,7 +6,8 @@ namespace Dinargab\LibraryBot\Infrastructure\Bot\Commands;
 use Dinargab\LibraryBot\Application\Book\DTO\GetBookRequestDTO;
 use Dinargab\LibraryBot\Application\Book\UseCase\GetBookUseCase;
 use Dinargab\LibraryBot\Application\Shared\DTO\BookDTO;
-use Dinargab\LibraryBot\Domain\User\Entity\User;
+use Dinargab\LibraryBot\Application\Shared\DTO\UserDTO;
+use Dinargab\LibraryBot\Domain\Exception\BookNotFoundException;
 use Dinargab\LibraryBot\Infrastructure\Bot\Service\PaginationKeyboardService;
 use SergiX44\Nutgram\Nutgram;
 use SergiX44\Nutgram\Telegram\Types\Keyboard\InlineKeyboardButton;
@@ -27,9 +28,9 @@ class BookDetailPageCommand
     public function __invoke(Nutgram $bot, string $bookId): void
     {
         $this->bot = $bot;
-        $bookDetail = ($this->useCase)(new GetBookRequestDTO((int)$bookId));
-
-        if (!$bookDetail) {
+        try {
+            $bookDetail = ($this->useCase)(new GetBookRequestDTO((int)$bookId));
+        } catch (BookNotFoundException $exception) {
             $bot->sendMessage('Книга не найдена');
             return;
         }
@@ -50,11 +51,11 @@ class BookDetailPageCommand
 
     private function createBookDetailKeyboard(BookDTO $bookDetail): InlineKeyboardMarkup
     {
-        /** @var User $user */
+        /** @var UserDTO $user */
         $user = $this->bot->get('user');
         $additionalButton = [];
 
-        if ($user->isAdmin()) {
+        if ($user->isAdmin) {
             $additionalButton = [
                 InlineKeyboardButton::make('Выдать книгу', callback_data: "lend_book:$bookDetail->id"),
                 InlineKeyboardButton::make('Удалить книгу', callback_data: "delete_book:$bookDetail->id"),
