@@ -7,7 +7,7 @@ use SergiX44\Nutgram\Nutgram;
 use SergiX44\Nutgram\Telegram\Types\Keyboard\InlineKeyboardButton;
 use SergiX44\Nutgram\Telegram\Types\Keyboard\InlineKeyboardMarkup;
 
-class PaginationKeyboardService
+class KeyboardService
 {
     /**
      * Создает клавиатуру пагинации
@@ -187,5 +187,24 @@ class PaginationKeyboardService
 
         return $keyboard;
     }
+
+    /**
+     * Построение клавиатуры подтверждения
+     */
+    public function buildConfirmationKeyboard(string $prefix): InlineKeyboardMarkup
+    {
+        return InlineKeyboardMarkup::make()
+            ->addRow(
+                InlineKeyboardButton::make(
+                    "Да, подтвердить",
+                    callback_data: "{$prefix}_confirm:yes"
+                ),
+                InlineKeyboardButton::make(
+                    "Отмена",
+                    callback_data: "close"
+                )
+            );
+    }
+
 
 }

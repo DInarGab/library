@@ -13,7 +13,7 @@ interface BookSuggestionRepositoryInterface
     public function findPending(): array;
 
     /** @return BookSuggestion[] */
-    public function findByUser(User $user): array;
+    public function findByUser(int $userId): array;
 
     /** @return BookSuggestion[] */
     public function findAll(): array;

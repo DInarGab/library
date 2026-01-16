@@ -6,6 +6,7 @@ namespace Dinargab\LibraryBot\Application\Book\UseCase;
 use Dinargab\LibraryBot\Application\Book\DTO\SuggestBookRequestDTO;
 use Dinargab\LibraryBot\Application\Shared\DTO\SuggestionDTO;
 use Dinargab\LibraryBot\Domain\Book\Entity\BookSuggestion;
+use Dinargab\LibraryBot\Domain\Book\Factory\BookParserFactoryInterface;
 use Dinargab\LibraryBot\Domain\Book\Repository\BookSuggestionRepositoryInterface;
 use Dinargab\LibraryBot\Domain\Exception\UserNotFoundException;
 use Dinargab\LibraryBot\Domain\User\Repository\UserRepositoryInterface;
@@ -32,8 +33,8 @@ class SuggestBookUseCase
         $parsedData = null;
 
         try {
-            $parser = $this->parserFactory->createForUrl($suggestBookRequestDTO->url);
-            $parsedBook = $parser->parse($suggestBookRequestDTO->url);
+            $parser = $this->parserFactory->createFromUrl($suggestBookRequestDTO->url);
+            $parsedBook = $parser->parseContent();
             $parsedData = $parsedBook->toArray();
         } catch (\Exception $e) {
             // Парсинг не сработал, получится сохранить только URL

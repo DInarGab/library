@@ -8,7 +8,7 @@ use Dinargab\LibraryBot\Application\Book\UseCase\GetBookUseCase;
 use Dinargab\LibraryBot\Application\Shared\DTO\BookDTO;
 use Dinargab\LibraryBot\Application\Shared\DTO\UserDTO;
 use Dinargab\LibraryBot\Domain\Exception\BookNotFoundException;
-use Dinargab\LibraryBot\Infrastructure\Bot\Service\PaginationKeyboardService;
+use Dinargab\LibraryBot\Infrastructure\Bot\Service\KeyboardService;
 use SergiX44\Nutgram\Nutgram;
 use SergiX44\Nutgram\Telegram\Types\Keyboard\InlineKeyboardButton;
 use SergiX44\Nutgram\Telegram\Types\Keyboard\InlineKeyboardMarkup;
@@ -17,8 +17,8 @@ class BookDetailPageCommand
 {
     private Nutgram $bot;
     public function __construct(
-        private GetBookUseCase            $useCase,
-        private PaginationKeyboardService $paginationKeyboardService,
+        private GetBookUseCase  $useCase,
+        private KeyboardService $paginationKeyboardService,
     )
     {
 

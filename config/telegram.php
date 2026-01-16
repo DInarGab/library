@@ -1,9 +1,9 @@
 <?php
 /** @var SergiX44\Nutgram\Nutgram $bot */
 
-use Dinargab\LibraryBot\Infrastructure\Bot\Commands\Admin\AddBookCommand;
+use Dinargab\LibraryBot\Infrastructure\Bot\Commands\Admin\AddBookConversation;
 use Dinargab\LibraryBot\Infrastructure\Bot\Commands\Admin\DeleteBookCommand;
-use Dinargab\LibraryBot\Infrastructure\Bot\Commands\Admin\LendBookCommand;
+use Dinargab\LibraryBot\Infrastructure\Bot\Commands\Admin\LendBookConversation;
 use Dinargab\LibraryBot\Infrastructure\Bot\Commands\Admin\ReturnBookCommand;
 use Dinargab\LibraryBot\Infrastructure\Bot\Commands\BookDetailPageCommand;
 use Dinargab\LibraryBot\Infrastructure\Bot\Commands\LendingsDetailPageCommand;
@@ -34,10 +34,10 @@ $bot->onCommand(ListLendingsCommand::PAGINATION_PREFIX, ListLendingsCommand::cla
 $bot->onCallbackQueryData(ListLendingsCommand::PAGINATION_PREFIX . ':{page}', ListLendingsCommand::class);
 
 $bot->group(function ($bot) {
-    $bot->onCommand('add_book', AddBookCommand::class);
+    $bot->onCommand('add_book', AddBookConversation::class);
 
     $bot->onCallbackQueryData('delete_book:{bookId}', DeleteBookCommand::class);
-    $bot->onCallbackQueryData(LendBookCommand::CALLBACK_PREFIX . ':{bookId}', LendBookCommand::class);
+    $bot->onCallbackQueryData(LendBookConversation::CALLBACK_PREFIX . ':{bookId}', LendBookConversation::class);
     $bot->onCallbackQueryData(ReturnBookCommand::RETURN_BOOK_PREFIX . ":{lendingId}", ReturnBookCommand::class);
 })->middleware(AdminMiddleware::class);
 

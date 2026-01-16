@@ -7,7 +7,7 @@ use Dinargab\LibraryBot\Application\Lending\DTO\ListLendingsRequestDTO;
 use Dinargab\LibraryBot\Application\Lending\UseCase\ListLendingsUseCase;
 use Dinargab\LibraryBot\Application\Shared\DTO\LendingDTO;
 use Dinargab\LibraryBot\Application\Shared\DTO\UserDTO;
-use Dinargab\LibraryBot\Infrastructure\Bot\Service\PaginationKeyboardService;
+use Dinargab\LibraryBot\Infrastructure\Bot\Service\KeyboardService;
 use SergiX44\Nutgram\Nutgram;
 use SergiX44\Nutgram\Telegram\Types\Keyboard\InlineKeyboardButton;
 
@@ -20,7 +20,7 @@ class ListLendingsCommand
 
     public function __construct(
         private ListLendingsUseCase        $getLendingsUseCase,
-        private PaginationKeyboardService $paginationKeyboardService
+        private KeyboardService $paginationKeyboardService
     )
     {
 

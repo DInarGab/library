@@ -6,7 +6,7 @@ namespace Dinargab\LibraryBot\Infrastructure\Bot\Commands;
 use Dinargab\LibraryBot\Application\Book\DTO\ListBooksRequestDTO;
 use Dinargab\LibraryBot\Application\Book\UseCase\ListAvailableBooksUseCase;
 use Dinargab\LibraryBot\Application\Shared\DTO\BookDTO;
-use Dinargab\LibraryBot\Infrastructure\Bot\Service\PaginationKeyboardService;
+use Dinargab\LibraryBot\Infrastructure\Bot\Service\KeyboardService;
 use SergiX44\Nutgram\Nutgram;
 use SergiX44\Nutgram\Telegram\Types\Keyboard\InlineKeyboardButton;
 
@@ -18,7 +18,7 @@ class ListBooksCommand
 
     public function __construct(
         private ListAvailableBooksUseCase $listAvailableBooksUseCase,
-        private PaginationKeyboardService $paginationKeyboardService
+        private KeyboardService $paginationKeyboardService
     )
     {
     }
