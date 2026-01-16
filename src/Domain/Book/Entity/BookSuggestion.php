@@ -6,7 +6,9 @@ namespace Dinargab\LibraryBot\Domain\Book\Entity;
 
 use DateTimeImmutable;
 use Dinargab\LibraryBot\Domain\Book\ValueObject\BookSuggestionStatus;
+use Dinargab\LibraryBot\Domain\Book\ValueObject\ISBN;
 use Dinargab\LibraryBot\Domain\User\Entity\User;
+use Dinargab\LibraryBot\Infrastructure\Persistence\Repository\BookSuggestionRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 
@@ -37,13 +39,20 @@ class BookSuggestion
     #[ORM\Column(type: 'string', length: 1000, nullable: true, name: "source_url")]
     private ?string $sourceUrl = null;
 
+    #[ORM\Embedded(class: ISBN::class, columnPrefix: "book_suggestion_")]
+    private ?ISBN $isbn = null;
     private ?array $parsedData = null;
+
+    #[ORM\Column(type: 'string', length: 1000, nullable: true)]
+    private ?string $comment;
 
     public function __construct(
         User $user,
         ?string $title = null,
         ?string $author = null,
         ?string $sourceUrl = null,
+        ?string $comment = null,
+        ?string $isbn = null,
         ?array $parsedData = null
     ) {
         $this->parsedData = $parsedData;
@@ -51,6 +60,8 @@ class BookSuggestion
         $this->author = $author;
         $this->title = $title;
         $this->user = $user;
+        $this->isbn = new ISBN($isbn);
+        $this->comment = $comment;
         $this->status = BookSuggestionStatus::PENDING;
         $this->adminComment = null;
         $this->createdAt = new DateTimeImmutable();
@@ -124,5 +135,15 @@ class BookSuggestion
     public function getCreatedAt(): DateTimeImmutable
     {
         return $this->createdAt;
+    }
+
+    public function getIsbn(): ?ISBN
+    {
+        return $this->isbn;
+    }
+
+    public function getComment(): ?string
+    {
+        return $this->comment;
     }
 }

@@ -35,7 +35,6 @@ class SuggestBookUseCase
         try {
             $parser = $this->parserFactory->createFromUrl($suggestBookRequestDTO->url);
             $parsedBook = $parser->parseContent();
-            $parsedData = $parsedBook->toArray();
         } catch (\Exception $e) {
             // Парсинг не сработал, получится сохранить только URL
             // Скорее всего это случится в 100% случаев)
@@ -43,6 +42,9 @@ class SuggestBookUseCase
 
         $suggestion = new BookSuggestion(
             user: $user,
+            title: $parsedBook->title,
+            author: $parsedBook->author,
+            isbn: $parsedBook->isbn,
             sourceUrl: $suggestBookRequestDTO->url,
             parsedData: $parsedData
         );
