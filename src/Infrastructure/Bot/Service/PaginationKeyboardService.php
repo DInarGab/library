@@ -91,8 +91,8 @@ class PaginationKeyboardService
     ): InlineKeyboardMarkup {
         $keyboard = InlineKeyboardMarkup::make();
 
-        foreach ($items as $item) {
-            $button = $itemCallback($item);
+        foreach ($items as $key => $item) {
+            $button = $itemCallback($item, $key);
             $keyboard->addRow($button);
         }
 

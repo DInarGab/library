@@ -31,10 +31,13 @@ interface LendingRepositoryInterface
     /** @return Lending[] */
     public function findAll(): array;
 
+    /** @return Lending[] */
+    public function findAllByUser(int $userId): array;
+
     public function save(Lending $lending): void;
 
     public function remove(Lending $lending): void;
 
-    public function countAll(): int;
+    public function countAll(int $userId = null): int;
 
 }

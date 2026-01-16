@@ -15,3 +15,4 @@
 /docker-compose
 .env
 .editorconfig
+.env.dev

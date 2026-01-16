@@ -20,8 +20,14 @@ class ListLendingsUseCase
 
     public function __invoke(ListLendingsRequestDTO $getLendingsRequestDTO)
     {
-        $lendingsArray = $this->lendingRepository->findAll($getLendingsRequestDTO->page, $getLendingsRequestDTO->limit, $getLendingsRequestDTO->userId);
-        $lendingsCount = $this->lendingRepository->countAll();
+        if (is_null($getLendingsRequestDTO->userId)) {
+            $lendingsArray = $this->lendingRepository->findAll($getLendingsRequestDTO->page, $getLendingsRequestDTO->limit);
+            $lendingsCount = $this->lendingRepository->countAll();
+        } else {
+            $lendingsArray = $this->lendingRepository->findAllByUser($getLendingsRequestDTO->userId);
+            $lendingsCount = $this->lendingRepository->countAll($getLendingsRequestDTO->userId);
+        }
+
         return new ListLendingsResponseDTO(
             array_map(fn(Lending $lending) => LendingDTO::fromEntity($lending), $lendingsArray) ,
             $getLendingsRequestDTO->page,

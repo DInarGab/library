@@ -100,16 +100,34 @@ class LendingRepository extends ServiceEntityRepository implements LendingReposi
             ->getResult();
     }
 
-    public function findAll(int $page = 1, int $limit = 10, ?int $userId = null): array
+    public function findAll(int $page = 1, int $limit = 10): array
     {
         $queryBuilder = $this->createQueryBuilder('lending')
             ->setMaxResults($limit)
             ->setFirstResult(($page - 1) * $limit);
-        if ($userId !== null) {
-            $queryBuilder->andWhere('lending.user = :userId')
-                ->setParameter('userId', $userId);
-        }
+        return $queryBuilder
+            ->getQuery()
+            ->getResult();
+    }
 
+    public function findAllByUser(int $userId, int $page = 1, int $limit = 10): array
+    {
+        return $this->createQueryBuilder('lending')
+            ->andWhere('lending.user = :userId')
+            ->setParameter('userId', $userId)
+            ->setMaxResults($limit)
+            ->setFirstResult(($page - 1) * $limit)
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findAllLended(int $page = 1, int $limit = 10): array
+    {
+        $queryBuilder = $this->createQueryBuilder('lending')
+            ->where('lending.status =:status')
+            ->setParameter('status', 'lent')
+            ->setMaxResults($limit)
+            ->setFirstResult(($page - 1) * $limit);
         return $queryBuilder
             ->getQuery()
             ->getResult();
@@ -127,8 +145,11 @@ class LendingRepository extends ServiceEntityRepository implements LendingReposi
         $this->getEntityManager()->flush();
     }
 
-    public function countAll(): int
+    public function countAll($userId = null): int
     {
-        return $this->count([]);
+        if (is_null($userId)) {
+            return $this->count([]);
+        }
+        return $this->count(['lending.user' => $userId]);
     }
 }

@@ -5,6 +5,7 @@ namespace Dinargab\LibraryBot\Infrastructure\Bot\Commands;
 
 use Dinargab\LibraryBot\Application\Book\DTO\ListBooksRequestDTO;
 use Dinargab\LibraryBot\Application\Book\UseCase\ListAvailableBooksUseCase;
+use Dinargab\LibraryBot\Application\Shared\DTO\BookDTO;
 use Dinargab\LibraryBot\Infrastructure\Bot\Service\PaginationKeyboardService;
 use SergiX44\Nutgram\Nutgram;
 use SergiX44\Nutgram\Telegram\Types\Keyboard\InlineKeyboardButton;
@@ -37,7 +38,7 @@ class ListBooksCommand
             items: $result->books,
             currentPage: $currentPage,
             totalPages: $result->maxPage,
-            itemCallback: fn($book) => InlineKeyboardButton::make(
+            itemCallback: fn(BookDTO $book, $key) => InlineKeyboardButton::make(
                 text: $book->title,
                 callback_data: "book_detail:{$book->id}"
             ),

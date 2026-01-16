@@ -19,7 +19,7 @@ class ListLendingsCommand
     public const PAGINATION_PREFIX = "list_lendings";
 
     public function __construct(
-        public ListLendingsUseCase        $getLendingsUseCase,
+        private ListLendingsUseCase        $getLendingsUseCase,
         private PaginationKeyboardService $paginationKeyboardService
     )
     {
@@ -52,8 +52,8 @@ class ListLendingsCommand
             items: $result->lendings,
             currentPage: $currentPage,
             totalPages: $result->maxPage,
-            itemCallback: fn(LendingDTO $lending) => InlineKeyboardButton::make(
-                text: "$lending->userName - $lending->bookAuthor \"$lending->bookTitle\" ($lending->dueDate)",
+            itemCallback: fn(LendingDTO $lending, $key) => InlineKeyboardButton::make(
+                text: "$key) $lending->userName: $lending->status - $lending->bookAuthor \"$lending->bookTitle\"\n Вернуть до: $lending->dueDate",
                 callback_data: "lending_detail:{$lending->id}"
             ),
             paginationCallbackPrefix: self::PAGINATION_PREFIX,
@@ -83,7 +83,7 @@ class ListLendingsCommand
 
     public function formatLendingsList(array $lendings, int $pageNumber): string
     {
-        if (empty($books)) {
+        if (empty($lendings)) {
             return "*Нет выданных книг*\n\n";
         }
 
