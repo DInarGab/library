@@ -17,7 +17,6 @@ class AddBookUseCase
         private BookRepositoryInterface $bookRepository,
         private BookCopyRepositoryInterface $bookCopyRepository,
         private BookFactoryInterface $bookFactory,
-        private BookCopyFactoryInterface $bookCopyFactory,
     ) {}
 
     public function __invoke(

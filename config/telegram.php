@@ -5,12 +5,15 @@ use Dinargab\LibraryBot\Infrastructure\Bot\Commands\Admin\AddBookConversation;
 use Dinargab\LibraryBot\Infrastructure\Bot\Commands\Admin\DeleteBookCommand;
 use Dinargab\LibraryBot\Infrastructure\Bot\Commands\Admin\LendBookConversation;
 use Dinargab\LibraryBot\Infrastructure\Bot\Commands\Admin\ReturnBookCommand;
+use Dinargab\LibraryBot\Infrastructure\Bot\Commands\Admin\SuggestionProcessingCommand;
 use Dinargab\LibraryBot\Infrastructure\Bot\Commands\BookDetailPageCommand;
 use Dinargab\LibraryBot\Infrastructure\Bot\Commands\LendingsDetailPageCommand;
 use Dinargab\LibraryBot\Infrastructure\Bot\Commands\ListBooksCommand;
 use Dinargab\LibraryBot\Infrastructure\Bot\Commands\ListLendingsCommand;
+use Dinargab\LibraryBot\Infrastructure\Bot\Commands\ListSuggestionsCommand;
 use Dinargab\LibraryBot\Infrastructure\Bot\Commands\StartCommand;
 use Dinargab\LibraryBot\Infrastructure\Bot\Commands\SuggestBookConversation;
+use Dinargab\LibraryBot\Infrastructure\Bot\Commands\SuggestionDetailPageCommand;
 use Dinargab\LibraryBot\Infrastructure\Bot\Middlewares\AdminMiddleware;
 use Dinargab\LibraryBot\Infrastructure\Bot\Middlewares\UserAuthMiddleware;
 use SergiX44\Nutgram\Conversations\Conversation;
@@ -28,7 +31,7 @@ $bot->onCommand('start', StartCommand::class);
 //Список книг и описание книги
 $bot->onCommand('list_books', ListBooksCommand::class);
 $bot->onCallbackQueryData('book_detail:{bookId}', BookDetailPageCommand::class);
-$bot->onCallbackQueryData(ListBooksCommand::PAGINATION_PREFIX . ':{page}', ListBooksCommand::class);
+$bot->onCallbackQueryData(ListBooksCommand::COMMAND_PREFIX . ':{page}', ListBooksCommand::class);
 $bot->onCallbackQueryData('lending_detail:{lendingId}', LendingsDetailPageCommand::class);
 //Список выдач книг и описание выдач
 $bot->onCommand(ListLendingsCommand::COMMAND_PREFIX, ListLendingsCommand::class);
@@ -38,6 +41,10 @@ $bot->onCallbackQueryData(ListLendingsCommand::COMMAND_PREFIX . ':{page}', ListL
 $bot->onCommand(SuggestBookConversation::COMMAND_PREFIX, SuggestBookConversation::class);
 $bot->onCallbackQueryData(SuggestBookConversation::COMMAND_PREFIX, SuggestBookConversation::class);
 
+//Список предложений
+$bot->onCommand(ListSuggestionsCommand::COMMAND_PREFIX, ListSuggestionsCommand::class);
+$bot->onCallbackQueryData(ListSuggestionsCommand::COMMAND_PREFIX, ListSuggestionsCommand::class);
+$bot->onCallbackQueryData(SuggestionDetailPageCommand::SUGGESTION_DETAIL_CALLBACK . ":{suggestionId}", SuggestionDetailPageCommand::class);
 
 $bot->group(function ($bot) {
     $bot->onCommand('add_book', AddBookConversation::class);
@@ -45,6 +52,14 @@ $bot->group(function ($bot) {
     $bot->onCallbackQueryData('delete_book:{bookId}', DeleteBookCommand::class);
     $bot->onCallbackQueryData(LendBookConversation::CALLBACK_PREFIX . ':{bookId}', LendBookConversation::class);
     $bot->onCallbackQueryData(ReturnBookCommand::RETURN_BOOK_PREFIX . ":{lendingId}", ReturnBookCommand::class);
+    //Отклонить и принять предложение
+
+    $bot->onCallbackQueryData(SuggestionProcessingCommand::PROCESS_SUGGESTION_CALLBACK . ":{suggestionId}:{status}", SuggestionProcessingCommand::class);
+    $bot->onCallbackQueryData(SuggestionProcessingCommand::PROCESS_SUGGESTION_CALLBACK . ":{suggestionId}:{status}", SuggestionProcessingCommand::class);
+
+//    $bot->onCallbackQueryData(SuggestionDetailPageCommand::SUGGESTION_DECLINED_CALLBACK . ":{suggestionId}", [SuggestionProcessingCommand::class, "decline"]);
+//    $bot->onCallbackQueryData(SuggestionDetailPageCommand::SUGGESTION_APPROVED_CALLBACK . ":{suggestionId}", [SuggestionProcessingCommand::class, "approve"]);
+
 })->middleware(AdminMiddleware::class);
 
 $bot->onCallbackQueryData('close', function (Nutgram $bot) {
@@ -56,7 +71,7 @@ $bot->onCallbackQueryData('close', function (Nutgram $bot) {
                 chat_id: $message->chat->id,
                 message_id: $message->message_id
             );
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             //Ничего не делаем, сообщение недоступно
         }
     }

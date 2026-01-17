@@ -8,10 +8,10 @@ use InvalidArgumentException;
 use Stringable;
 
 #[ORM\Embeddable]
-readonly class ISBN implements Stringable
+class ISBN implements Stringable
 {
     #[ORM\Column(type: 'string', length: 20, name: 'isbn', nullable: true)]
-    private string $value;
+    private ?string $value = null;
 
     public function __construct(string $value)
     {
@@ -68,13 +68,13 @@ readonly class ISBN implements Stringable
         return (($check % 10) === 0);
     }
 
-    public function getValue(): string
+    public function getValue(): ?string
     {
         return $this->value;
     }
 
     public function __toString(): string
     {
-        return $this->value;
+        return $this->value ?? "";
     }
 }

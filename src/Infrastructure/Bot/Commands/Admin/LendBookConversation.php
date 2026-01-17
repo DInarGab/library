@@ -247,7 +247,7 @@ class LendBookConversation extends BaseConversation
 
         $keyboard = InlineKeyboardMarkup::make()
             ->addRow(
-                InlineKeyboardButton::make('К списку книг', callback_data: ListBooksCommand::PAGINATION_PREFIX . ':1')
+                InlineKeyboardButton::make('К списку книг', callback_data: ListBooksCommand::COMMAND_PREFIX . ':1')
             );
 
         $this->editOrSendMessage($bot, $text, $keyboard);

@@ -11,12 +11,13 @@ class SuggestionDTO
         public int $id,
         public string $userName,
         public int $userTelegramId,
+        public ?string $isbn,
         public ?string $title,
         public ?string $author,
         public ?string $sourceUrl,
-        public ?array $parsedData,
         public string $status,
         public ?string $adminComment,
+        public ?string $comment,
         public string $createdAt
     ) {}
 
@@ -24,14 +25,15 @@ class SuggestionDTO
     {
         return new self(
             id: $suggestion->getId() ?? 0,
+            isbn: $suggestion->getIsbn()?->getValue(),
             userName: $suggestion->getUser()->getDisplayName(),
             userTelegramId: $suggestion->getUser()->getTelegramId()->getValue(),
             title: $suggestion->getTitle(),
             author: $suggestion->getAuthor(),
             sourceUrl: $suggestion->getSourceUrl(),
-            parsedData: $suggestion->getParsedData(),
             status: $suggestion->getStatus()->value,
             adminComment: $suggestion->getAdminComment(),
+            comment: $suggestion->getComment(),
             createdAt: $suggestion->getCreatedAt()->format('Y-m-d H:i')
         );
     }

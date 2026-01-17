@@ -28,14 +28,14 @@ class BookSuggestion
     #[ORM\ManyToOne(targetEntity: User::class)]
     private User $user;
     #[ORM\Column(type: 'string', length: 500)]
-    private ?string $title = null;
+    private ?string $title;
     #[ORM\Column(type: 'string', length: 255)]
-    private ?string $author = null;
+    private ?string $author;
     #[ORM\Column(type: 'string', length: 1000, nullable: true, name: "source_url")]
-    private ?string $sourceUrl = null;
+    private ?string $sourceUrl;
     #[ORM\Embedded(class: ISBN::class, columnPrefix: "book_suggestion_")]
     private ?ISBN $isbn = null;
-    private ?array $parsedData = null;
+    private ?array $parsedData;
     #[ORM\Column(type: 'string', length: 1000, nullable: true)]
     private ?string $comment;
 
@@ -106,7 +106,6 @@ class BookSuggestion
         return $this->status === BookSuggestionStatus::PENDING;
     }
 
-
     public function getDisplayInfo(): string
     {
         $info = [];
@@ -139,5 +138,17 @@ class BookSuggestion
     public function getComment(): ?string
     {
         return $this->comment;
+    }
+
+    public function setStatus(BookSuggestionStatus $status): BookSuggestion
+    {
+        $this->status = $status;
+        return $this;
+    }
+
+    public function setAdminComment(?string $adminComment): BookSuggestion
+    {
+        $this->adminComment = $adminComment;
+        return $this;
     }
 }

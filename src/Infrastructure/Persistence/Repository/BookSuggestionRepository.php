@@ -22,7 +22,7 @@ class BookSuggestionRepository extends ServiceEntityRepository implements BookSu
     }
 
 
-    public function findById(string $id): ?BookSuggestion
+    public function findById(int $id): ?BookSuggestion
     {
         return $this->findOneBy(['id' => $id]);
     }
@@ -31,16 +31,23 @@ class BookSuggestionRepository extends ServiceEntityRepository implements BookSu
     {
         return $this->createQueryBuilder('bookSuggestion')
             ->where('bookSuggestion.status = :status')
-            ->setParameter('bookSuggestion.status', BookSuggestionStatus::PENDING)
+            ->leftJoin('bookSuggestion.user', 'user')
+            ->setParameter('status', BookSuggestionStatus::PENDING)
             ->setFirstResult(($page - 1) * $limit)
             ->setMaxResults($limit)
             ->getQuery()
             ->getResult();
     }
 
-    public function findByUser(int $userId): array
+    public function findByUser(int $userId, int $page, int $limit): array
     {
-        // TODO: Implement findByUser() method.
+        return $this->createQueryBuilder('bookSuggestion')
+            ->where('bookSuggestion.userId = :userId')
+            ->setParameter('userId', $userId)
+            ->setFirstResult(($page - 1) * $limit)
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
     }
 
     public function findAll(): array

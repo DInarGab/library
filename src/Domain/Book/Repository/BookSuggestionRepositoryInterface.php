@@ -7,13 +7,13 @@ use Dinargab\LibraryBot\Domain\Book\Entity\BookSuggestion;
 
 interface BookSuggestionRepositoryInterface
 {
-    public function findById(string $id): ?BookSuggestion;
+    public function findById(int $id): ?BookSuggestion;
 
     /** @return BookSuggestion[] */
     public function findPending(int $page, int $limit): array;
 
     /** @return BookSuggestion[] */
-    public function findByUser(int $userId): array;
+    public function findByUser(int $userId, int $page, int $limit): array;
 
     /** @return BookSuggestion[] */
     public function findAll(): array;
