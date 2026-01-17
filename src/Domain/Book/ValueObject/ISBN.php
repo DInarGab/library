@@ -10,7 +10,7 @@ use Stringable;
 #[ORM\Embeddable]
 readonly class ISBN implements Stringable
 {
-    #[ORM\Column(type: 'string', length: 20, name: 'isbn')]
+    #[ORM\Column(type: 'string', length: 20, name: 'isbn', nullable: true)]
     private string $value;
 
     public function __construct(string $value)

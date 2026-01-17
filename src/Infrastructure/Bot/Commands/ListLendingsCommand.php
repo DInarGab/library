@@ -16,7 +16,7 @@ class ListLendingsCommand
 
     private const PER_PAGE = 5;
 
-    public const PAGINATION_PREFIX = "list_lendings";
+    public const COMMAND_PREFIX = "list_lendings";
 
     public function __construct(
         private ListLendingsUseCase        $getLendingsUseCase,
@@ -56,7 +56,7 @@ class ListLendingsCommand
                 text: "$key) $lending->userName: $lending->status - $lending->bookAuthor \"$lending->bookTitle\"\n Вернуть до: $lending->dueDate",
                 callback_data: "lending_detail:{$lending->id}"
             ),
-            paginationCallbackPrefix: self::PAGINATION_PREFIX,
+            paginationCallbackPrefix: self::COMMAND_PREFIX,
         );
 
         if ($bot->callbackQuery() !== null) {

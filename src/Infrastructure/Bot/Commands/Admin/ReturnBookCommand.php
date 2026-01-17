@@ -34,7 +34,7 @@ class ReturnBookCommand
             . "Возращена: $lendingInfo->dueDate \n";
         $keyboard = InlineKeyboardMarkup::make();
         $keyboard->addRow(
-            InlineKeyboardButton::make("Назад", callback_data: ListLendingsCommand::PAGINATION_PREFIX . ":1"),
+            InlineKeyboardButton::make("Назад", callback_data: ListLendingsCommand::COMMAND_PREFIX . ":1"),
             InlineKeyboardButton::make("Закрыть", callback_data: "close")
         );
         $bot->editMessageText(

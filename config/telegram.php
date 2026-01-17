@@ -10,6 +10,7 @@ use Dinargab\LibraryBot\Infrastructure\Bot\Commands\LendingsDetailPageCommand;
 use Dinargab\LibraryBot\Infrastructure\Bot\Commands\ListBooksCommand;
 use Dinargab\LibraryBot\Infrastructure\Bot\Commands\ListLendingsCommand;
 use Dinargab\LibraryBot\Infrastructure\Bot\Commands\StartCommand;
+use Dinargab\LibraryBot\Infrastructure\Bot\Commands\SuggestBookConversation;
 use Dinargab\LibraryBot\Infrastructure\Bot\Middlewares\AdminMiddleware;
 use Dinargab\LibraryBot\Infrastructure\Bot\Middlewares\UserAuthMiddleware;
 use SergiX44\Nutgram\Conversations\Conversation;
@@ -30,8 +31,13 @@ $bot->onCallbackQueryData('book_detail:{bookId}', BookDetailPageCommand::class);
 $bot->onCallbackQueryData(ListBooksCommand::PAGINATION_PREFIX . ':{page}', ListBooksCommand::class);
 $bot->onCallbackQueryData('lending_detail:{lendingId}', LendingsDetailPageCommand::class);
 //Список выдач книг и описание выдач
-$bot->onCommand(ListLendingsCommand::PAGINATION_PREFIX, ListLendingsCommand::class);
-$bot->onCallbackQueryData(ListLendingsCommand::PAGINATION_PREFIX . ':{page}', ListLendingsCommand::class);
+$bot->onCommand(ListLendingsCommand::COMMAND_PREFIX, ListLendingsCommand::class);
+$bot->onCallbackQueryData(ListLendingsCommand::COMMAND_PREFIX . ':{page}', ListLendingsCommand::class);
+
+//Предложение книги
+$bot->onCommand(SuggestBookConversation::COMMAND_PREFIX, SuggestBookConversation::class);
+$bot->onCallbackQueryData(SuggestBookConversation::COMMAND_PREFIX, SuggestBookConversation::class);
+
 
 $bot->group(function ($bot) {
     $bot->onCommand('add_book', AddBookConversation::class);

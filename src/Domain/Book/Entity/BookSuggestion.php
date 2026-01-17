@@ -19,48 +19,42 @@ class BookSuggestion
     #[ORM\Column(type: 'integer')]
     #[ORM\GeneratedValue(strategy: 'IDENTITY')]
     private int $id;
-
-    #[ORM\Column(type: 'string', length: 20)]
+    #[ORM\Column(type: 'string', length: 20, enumType: BookSuggestionStatus::class)]
     private BookSuggestionStatus $status;
     #[Orm\Column(type: 'text', name: 'admin_comment', nullable: true)]
     private ?string $adminComment;
-
     #[ORM\Column(type: 'datetime_immutable', name: "created_at", nullable: false)]
     private DateTimeImmutable $createdAt;
     #[ORM\ManyToOne(targetEntity: User::class)]
     private User $user;
-
     #[ORM\Column(type: 'string', length: 500)]
     private ?string $title = null;
-
     #[ORM\Column(type: 'string', length: 255)]
     private ?string $author = null;
-
     #[ORM\Column(type: 'string', length: 1000, nullable: true, name: "source_url")]
     private ?string $sourceUrl = null;
-
     #[ORM\Embedded(class: ISBN::class, columnPrefix: "book_suggestion_")]
     private ?ISBN $isbn = null;
     private ?array $parsedData = null;
-
     #[ORM\Column(type: 'string', length: 1000, nullable: true)]
     private ?string $comment;
 
     public function __construct(
-        User $user,
+        User    $user,
         ?string $title = null,
         ?string $author = null,
         ?string $sourceUrl = null,
         ?string $comment = null,
         ?string $isbn = null,
-        ?array $parsedData = null
-    ) {
+        ?array  $parsedData = null
+    )
+    {
         $this->parsedData = $parsedData;
         $this->sourceUrl = $sourceUrl;
         $this->author = $author;
         $this->title = $title;
         $this->user = $user;
-        $this->isbn = new ISBN($isbn);
+        $this->isbn = $isbn ? new ISBN($isbn) : null;
         $this->comment = $comment;
         $this->status = BookSuggestionStatus::PENDING;
         $this->adminComment = null;

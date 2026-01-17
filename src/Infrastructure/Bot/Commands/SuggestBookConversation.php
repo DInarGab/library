@@ -3,7 +3,9 @@ declare(strict_types=1);
 
 namespace Dinargab\LibraryBot\Infrastructure\Bot\Commands;
 
+use Dinargab\LibraryBot\Application\Book\DTO\ParseBookRequestDTO;
 use Dinargab\LibraryBot\Application\Book\DTO\SuggestBookRequestDTO;
+use Dinargab\LibraryBot\Application\Book\UseCase\ParseBookUseCase;
 use Dinargab\LibraryBot\Application\Book\UseCase\SuggestBookUseCase;
 use Dinargab\LibraryBot\Application\Shared\DTO\UserDTO;
 use Dinargab\LibraryBot\Infrastructure\Bot\Service\KeyboardService;
@@ -14,22 +16,35 @@ use SergiX44\Nutgram\Telegram\Types\Keyboard\InlineKeyboardMarkup;
 
 class SuggestBookConversation extends BaseConversation
 {
+
+    public const COMMAND_PREFIX = 'suggest_book';
+
+    public const TYPE_MANUAL_CALLBACK = "type:manual";
+
+    public const TYPE_URL_CALLBACK = "type:url";
+
+    public const SKIP_COMMENT_CALLBACK = 'skip_comment';
+
+
     public ?string $suggestType = null;
     public ?string $url = null;
     public ?string $title = null;
     public ?string $author = null;
     public ?string $comment = null;
+    public ?string $isbn = null;
 
     public function __construct(
         private SuggestBookUseCase $suggestBookUseCase,
-        protected KeyboardService $keyboardService,
-    ) {
+        private ParseBookUseCase   $parseBookUseCase,
+        protected KeyboardService  $keyboardService,
+    )
+    {
         parent::__construct($this->keyboardService);
     }
 
     protected function getCallbackPrefix(): string
     {
-        return 'suggest_book';
+        return self::COMMAND_PREFIX;
     }
 
     protected function resetState(): void
@@ -39,12 +54,16 @@ class SuggestBookConversation extends BaseConversation
         $this->title = null;
         $this->author = null;
         $this->comment = null;
+        $this->isbn = null;
     }
 
     protected function getConfirmationData(): array
     {
         if ($this->suggestType === 'url') {
             return [
+                'Автор' => $this->author,
+                'Название' => $this->title,
+                'ISBN' => $this->isbn,
                 'Ссылка' => $this->url,
                 'Комментарий' => $this->comment,
             ];
@@ -65,8 +84,8 @@ class SuggestBookConversation extends BaseConversation
             text: "📚 *Предложить книгу*\n\nВыберите способ добавления:",
             parse_mode: 'Markdown',
             reply_markup: InlineKeyboardMarkup::make()
-                ->addRow($this->makeButton("По ссылке", "type:url"))
-                ->addRow($this->makeButton("Ввести вручную", "type:manual"))
+                ->addRow($this->makeButton("По ссылке", self::TYPE_URL_CALLBACK))
+                ->addRow($this->makeButton("Ввести вручную", self::TYPE_MANUAL_CALLBACK))
                 ->addRow(InlineKeyboardButton::make("Отмена", callback_data: "close"))
         );
 
@@ -85,7 +104,7 @@ class SuggestBookConversation extends BaseConversation
         $data = $callbackQuery->data;
         $bot->answerCallbackQuery();
 
-        if ($this->isCallbackAction($data, 'type:url')) {
+        if ($this->isCallbackAction($data, self::TYPE_URL_CALLBACK)) {
             $this->suggestType = 'url';
             $this->editOrSendMessage(
                 bot: $bot,
@@ -94,7 +113,7 @@ class SuggestBookConversation extends BaseConversation
             );
             $this->next('askUrl');
 
-        } elseif ($this->isCallbackAction($data, 'type:manual')) {
+        } elseif ($this->isCallbackAction($data, self::TYPE_MANUAL_CALLBACK)) {
             $this->suggestType = 'manual';
             $this->editOrSendMessage(
                 bot: $bot,
@@ -122,7 +141,19 @@ class SuggestBookConversation extends BaseConversation
         }
 
         $this->url = $text;
-        $this->askForComment($bot);
+
+        $parsedBookContent = ($this->parseBookUseCase)(new ParseBookRequestDTO($this->url));
+        if (is_null($parsedBookContent)) {
+            $this->editOrSendMessage($bot, "Не удалось спарсить содержимое ссылки.\n\n Введите Название книги");
+            $this->next('askTitle');
+        } else {
+            $this->author = $parsedBookContent->author;
+            $this->title = $parsedBookContent->title;
+            $this->isbn = $parsedBookContent->isbn;
+            $this->askForComment($bot);
+        }
+
+
     }
 
     public function askTitle(Nutgram $bot): void
@@ -167,7 +198,7 @@ class SuggestBookConversation extends BaseConversation
         $callbackQuery = $bot->callbackQuery();
 
         // Кнопка "Пропустить"
-        if ($callbackQuery !== null && $this->isCallbackAction($callbackQuery->data, 'skip_comment')) {
+        if ($callbackQuery !== null && $this->isCallbackAction($callbackQuery->data, self::SKIP_COMMENT_CALLBACK)) {
             $bot->answerCallbackQuery();
             $this->comment = null;
             $this->showConfirmation($bot);
@@ -193,8 +224,9 @@ class SuggestBookConversation extends BaseConversation
             /** @var UserDTO $user */
             $user = $this->bot->get('user');
             $dto = new SuggestBookRequestDTO(
-                id: $user->id,
+                userId: $user->id,
                 url: $this->url,
+                isbn: $this->isbn,
                 title: $this->title,
                 author: $this->author,
                 comment: $this->comment,

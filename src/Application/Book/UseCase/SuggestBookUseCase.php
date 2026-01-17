@@ -17,36 +17,27 @@ class SuggestBookUseCase
     public function __construct(
         private BookSuggestionRepositoryInterface $suggestionRepository,
         private UserRepositoryInterface $userRepository,
-        private BookParserFactoryInterface $parserFactory
     ) {}
 
     public function __invoke(
         SuggestBookRequestDTO $suggestBookRequestDTO
     )
     {
-        $user = $this->userRepository->findByTelegramId($suggestBookRequestDTO->telegramId);
+        $user = $this->userRepository->findById($suggestBookRequestDTO->userId);
 
         if ($user === null) {
             throw new UserNotFoundException("User not found");
         }
 
-        $parsedData = null;
 
-        try {
-            $parser = $this->parserFactory->createFromUrl($suggestBookRequestDTO->url);
-            $parsedBook = $parser->parseContent();
-        } catch (\Exception $e) {
-            // Парсинг не сработал, получится сохранить только URL
-            // Скорее всего это случится в 100% случаев)
-        }
 
         $suggestion = new BookSuggestion(
             user: $user,
-            title: $parsedBook->title,
-            author: $parsedBook->author,
-            isbn: $parsedBook->isbn,
+            title: $suggestBookRequestDTO->title,
+            author: $suggestBookRequestDTO->author,
+            isbn: $suggestBookRequestDTO->isbn,
+            comment: $suggestBookRequestDTO->comment,
             sourceUrl: $suggestBookRequestDTO->url,
-            parsedData: $parsedData
         );
 
         $this->suggestionRepository->save($suggestion);

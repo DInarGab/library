@@ -6,15 +6,15 @@ namespace Dinargab\LibraryBot\Infrastructure\Parsers\LabirynthParser;
 use Dinargab\LibraryBot\Application\Shared\DTO\ParsedBookDTO;
 use Dinargab\LibraryBot\Domain\Service\BookParserInterface;
 use DOMXPath;
-use GuzzleHttp\ClientInterface;
 use DOMDocument;
 use InvalidArgumentException;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-class LabirynthParser implements BookParserInterface
+class LabirintParser implements BookParserInterface
 {
 
     public function __construct(
-        private ClientInterface $httpClient,
+        private HttpClientInterface $httpClient,
     )
     {
 
@@ -28,11 +28,11 @@ class LabirynthParser implements BookParserInterface
         $response = $this->httpClient->request('GET', $url);
 
         $dom = new DOMDocument();
-        @$dom->loadHTML($response->getBody()->getContents());
+        @$dom->loadHTML($response->getContent());
         $xpath = new DOMXPath($dom);
         // Получаем все данные
         $description = $this->getDescription($xpath);
-        [$title, $author] = explode(",", $this->getTitleAndAuthor($xpath));
+        [$title, $author] = explode(":", $this->getTitleAndAuthor($xpath));
         $isbn = $this->getIsbn($xpath);
 
         return new ParsedBookDTO(
