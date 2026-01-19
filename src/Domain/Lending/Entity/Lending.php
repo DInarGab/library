@@ -18,7 +18,7 @@ class Lending
     #[ORM\Id]
     #[ORM\Column(type: 'integer')]
     #[ORM\GeneratedValue(strategy: 'IDENTITY')]
-    private string $id;
+    private int $id;
 
     #[ORM\ManyToOne(targetEntity: BookCopy::class, inversedBy: 'lendings')]
     private BookCopy $bookCopy;
@@ -53,7 +53,7 @@ class Lending
         $this->createdAt = new DateTimeImmutable();
     }
 
-    public function getId(): string
+    public function getId(): int
     {
         return $this->id;
     }

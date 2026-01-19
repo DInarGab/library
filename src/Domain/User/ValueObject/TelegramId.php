@@ -9,10 +9,10 @@ use Doctrine\ORM\Mapping as ORM;
 readonly class TelegramId implements \Stringable
 {
     #[ORM\Column(type: 'bigint', name: 'telegram_id', unique: true, nullable: false)]
-    private int $value;
+    private string $value;
 
     public function __construct(
-        int $value
+        string $value
     ) {
         $this->value = $value;
         if ($value <= 0) {
@@ -20,7 +20,7 @@ readonly class TelegramId implements \Stringable
         }
     }
 
-    public function getValue(): int
+    public function getValue(): string
     {
         return $this->value;
     }

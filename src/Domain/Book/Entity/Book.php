@@ -5,10 +5,13 @@ namespace Dinargab\LibraryBot\Domain\Book\Entity;
 
 use DateTimeImmutable;
 use Dinargab\LibraryBot\Domain\Book\ValueObject\ISBN;
+use Dinargab\LibraryBot\Domain\Event\Events\DomainEventInterface;
+use Dinargab\LibraryBot\Domain\Event\EventSubjectInterface;
 use Dinargab\LibraryBot\Infrastructure\Persistence\Repository\BookRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use SplObjectStorage;
 
 
 #[ORM\Entity(repositoryClass: BookRepository::class)]
@@ -35,6 +38,8 @@ class Book
     /** @var Collection<int, BookCopy> */
     #[ORM\OneToMany(mappedBy: 'book', targetEntity: BookCopy::class, cascade: ['remove'])]
     private Collection $copies;
+
+    private SplObjectStorage $observers;
 
     public function __construct(
         string $title,

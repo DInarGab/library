@@ -12,7 +12,7 @@ class UserDTO
         public readonly int $id,
         public readonly string $displayName,
         public readonly ?string $username,
-        public readonly int $telegramId,
+        public readonly string $telegramId,
         public readonly ?bool $isAdmin
     )
     {

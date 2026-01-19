@@ -9,7 +9,7 @@ interface UserRepositoryInterface
 {
     public function findById(int $id): ?User;
 
-    public function findByTelegramId(int $telegramId): ?User;
+    public function findByTelegramId(string $telegramId): ?User;
 
     public function findAll(int $page = 1, int $limit = 10): array;
 

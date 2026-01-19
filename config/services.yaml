@@ -20,13 +20,21 @@ services:
         resource: '../src/'
 #        public: true
         exclude:
+            - '../src/Domain/Event/Events/'
             - '../src/Infrastructure/Bot/'
+
+
+    Dinargab\LibraryBot\Infrastructure\Event\Observer\MessengerEventObserver:
+        tags: [ 'library.event_observer' ]
+
     # Nutgram handlers
     Dinargab\LibraryBot\Infrastructure\Bot\:
         public: true
         autowire: true
         shared: false
         resource: '../src/Infrastructure/Bot/'
+        exclude:
+            - '../src/Infrastructure/Bot/Queue'
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

@@ -9,8 +9,14 @@ RUN apt-get update && apt-get install -y \
         libzip-dev \
         libssl-dev \
         libpq-dev \
+        librabbitmq-dev \
         && docker-php-ext-install -j$(nproc) iconv mbstring mysqli pdo_mysql pdo_pgsql pgsql zip gd sockets \
         && docker-php-ext-configure gd --with-freetype --with-jpeg
+
+RUN pecl install redis \
+    && docker-php-ext-enable redis \
+    && pecl install amqp \
+    && docker-php-ext-enable amqp
 
 #Устанавливаем composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer

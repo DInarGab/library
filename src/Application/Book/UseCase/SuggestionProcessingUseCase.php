@@ -7,12 +7,15 @@ use Dinargab\LibraryBot\Application\Book\DTO\SuggestionProcessingRequestDTO;
 use Dinargab\LibraryBot\Application\Shared\DTO\SuggestionDTO;
 use Dinargab\LibraryBot\Domain\Book\Repository\BookSuggestionRepositoryInterface;
 use Dinargab\LibraryBot\Domain\Book\ValueObject\BookSuggestionStatus;
+use Dinargab\LibraryBot\Domain\Event\EventDispatcherInterface;
+use Dinargab\LibraryBot\Domain\Event\Events\SuggestionProcessedEvent;
 use InvalidArgumentException;
 
 class SuggestionProcessingUseCase
 {
     public function __construct(
         private BookSuggestionRepositoryInterface $bookSuggestionRepository,
+        private EventDispatcherInterface $eventDispatcher
     )
     {
 
@@ -36,6 +39,16 @@ class SuggestionProcessingUseCase
             $suggestion->setAdminComment($suggestionRequestDTO->adminComment);
         }
         $this->bookSuggestionRepository->save($suggestion);
+
+        //Событие
+        $this->eventDispatcher->dispatch(new SuggestionProcessedEvent(
+            $suggestion->getUser()->getTelegramId()->getValue(),
+            $suggestion->getAuthor(),
+            $suggestion->getTitle(),
+            $suggestion->getSourceUrl(),
+            $suggestionRequestDTO->suggestionStatus === BookSuggestionStatus::APPROVED,
+
+        ));
         return SuggestionDTO::fromEntity($suggestion);
     }
 }

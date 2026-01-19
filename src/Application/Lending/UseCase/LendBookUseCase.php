@@ -7,6 +7,8 @@ use Dinargab\LibraryBot\Application\Lending\DTO\LendingRequestDTO;
 use Dinargab\LibraryBot\Application\Shared\DTO\LendingDTO;
 use Dinargab\LibraryBot\Domain\Book\Repository\BookCopyRepositoryInterface;
 use Dinargab\LibraryBot\Domain\Book\Repository\BookRepositoryInterface;
+use Dinargab\LibraryBot\Domain\Event\EventDispatcherInterface;
+use Dinargab\LibraryBot\Domain\Event\Events\BookLentEvent;
 use Dinargab\LibraryBot\Domain\Exception\BookNotAvailableException;
 use Dinargab\LibraryBot\Domain\Exception\BookNotFoundException;
 use Dinargab\LibraryBot\Domain\Exception\UserNotFoundException;
@@ -26,6 +28,7 @@ class LendBookUseCase
         private LendingRepositoryInterface $lendingRepository,
         private LendingFactoryInterface $lendingFactory,
         private BookCopyRepositoryInterface $bookCopyRepository,
+        private EventDispatcherInterface $eventDispatcher
     ) {}
 
     public function __invoke(
@@ -60,6 +63,16 @@ class LendBookUseCase
         $availableCopy->markAsBorrowed();
         $this->bookCopyRepository->save($availableCopy);
 
+        $this->eventDispatcher->dispatch(new BookLentEvent(
+            lendingId: $lending->getId(),
+            bookId: $availableCopy->getBook()->getId(),
+            bookAuthor: $availableCopy->getBook()->getAuthor(),
+            bookTitle: $availableCopy->getBook()->getTitle(),
+            bookCopyId: $availableCopy->getId(),
+            inventoryNumber: $availableCopy->getInventoryNumber(),
+            userTelegramId: $user->getTelegramId()->getValue(),
+            dueDate: $lending->getDueDate()
+        ));
         return LendingDTO::fromEntity($lending);
     }
 

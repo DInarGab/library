@@ -21,11 +21,11 @@ class UserAuthMiddleware
         $user = $bot->user();
         $botUser = ($this->getOrCreateUserUseCase)(
             new GetOrCreateUserRequestDTO(
-                $user->id,
+                (string) $user->id,
                 $user->username,
                 $user->first_name,
                 $user->last_name,
-                getenv('TELEGRAM_ADMIN_ID') === $user->id
+                trim(getenv('TELEGRAM_ADMIN_ID')) === (string)$user->id
             )
         );
 

@@ -5,6 +5,8 @@ namespace Dinargab\LibraryBot\Application\Book\UseCase;
 
 use Dinargab\LibraryBot\Application\Book\DTO\DeleteBookRequestDTO;
 use Dinargab\LibraryBot\Domain\Book\Repository\BookRepositoryInterface;
+use Dinargab\LibraryBot\Domain\Event\EventDispatcherInterface;
+use Dinargab\LibraryBot\Domain\Event\Events\BookDeletedEvent;
 use Dinargab\LibraryBot\Domain\Exception\BookNotFoundException;
 use Dinargab\LibraryBot\Domain\Lending\Repository\LendingRepositoryInterface;
 
@@ -12,13 +14,14 @@ class DeleteBookUseCase
 {
     public function __construct(
         private BookRepositoryInterface $bookRepository,
-        private LendingRepositoryInterface $lendingRepository
+        private LendingRepositoryInterface $lendingRepository,
+        private EventDispatcherInterface $eventDispatcher
     ) {}
 
 
     public function __invoke(
         DeleteBookRequestDTO $deleteBookRequestDTO
-    )
+    ):void
     {
         $book = $this->bookRepository->findById($deleteBookRequestDTO->bookId);
 
@@ -34,7 +37,16 @@ class DeleteBookUseCase
                 );
             }
         }
+        $bookTitle = $book->getTitle();
+        $bookAuthor = $book->getAuthor();
+        $bookId = $book->getId();
 
         $this->bookRepository->delete($book);
+
+        $this->eventDispatcher->dispatch(new BookDeletedEvent(
+            bookId: $bookId,
+            title: $bookTitle,
+            author: $bookAuthor
+        ));
     }
 }

@@ -23,7 +23,7 @@ class UserRepository extends ServiceEntityRepository implements UserRepositoryIn
         return $this->find($id);
     }
 
-    public function findByTelegramId(int $telegramId): ?User
+    public function findByTelegramId(string $telegramId): ?User
     {
         return $this->findOneBy(['telegramId.value' => $telegramId]);
     }

@@ -11,7 +11,7 @@ use Dinargab\LibraryBot\Domain\User\ValueObject\UserRole;
 class UserFactory implements UserFactoryInterface
 {
     public function create(
-        int     $telegramId,
+        string $telegramId,
         ?string $username = null,
         ?string $firstName = null,
         ?string $lastName = null,

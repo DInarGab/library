@@ -13,7 +13,6 @@ use Dinargab\LibraryBot\Infrastructure\Bot\Commands\BaseConversation;
 use Dinargab\LibraryBot\Infrastructure\Bot\Service\KeyboardService;
 use Exception;
 use SergiX44\Nutgram\Nutgram;
-use SergiX44\Nutgram\Telegram\Types\Keyboard\InlineKeyboardButton;
 use SergiX44\Nutgram\Telegram\Types\Keyboard\InlineKeyboardMarkup;
 
 class SuggestionProcessingCommand extends BaseConversation

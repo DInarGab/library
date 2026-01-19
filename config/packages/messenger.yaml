@@ -1,0 +1,51 @@
+framework:
+    messenger:
+        transports:
+#            telegram_updates:
+#                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+#                options:
+#                    exchange:
+#                        name: telegram_updates
+#                        type: direct
+#                        default_publish_routing_key: telegram_update
+#                    queues:
+#                        telegram_updates_queue:
+#                            binding_keys:
+#                                - telegram_update
+            async:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                options:
+                    exchange:
+                        name: library_events
+                        type: topic
+                    queues:
+                        library_events_queue:
+                            binding_keys: ['event.*']
+                retry_strategy:
+                    max_retries: 3
+                    delay: 1000
+                    multiplier: 2
+
+        # Маршрутизация сообщений к транспортам
+        routing:
+            'Dinargab\LibraryBot\Domain\Event\Events\BookAddedEvent':
+                senders: ['async']
+                options:
+                    routing_key: 'event.book_added'
+            'Dinargab\LibraryBot\Domain\Event\Events\BookDeletedEvent':
+                senders: ['async']
+                options:
+                    routing_key: 'event.book_deleted'
+            'Dinargab\LibraryBot\Domain\Event\Events\BookLentEvent':
+                senders: ['async']
+                options:
+                    routing_key: 'event.book_lent'
+            'Dinargab\LibraryBot\Domain\Event\Events\BookReturnedEvent':
+                senders: ['async']
+                options:
+                    routing_key: 'event.book_returned'
+            'Dinargab\LibraryBot\Domain\Event\Events\LendingOverdueEvent':
+                senders: ['async']
+                options:
+                    routing_key: 'event.lending.overdue'
+

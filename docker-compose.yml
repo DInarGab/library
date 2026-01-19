@@ -33,6 +33,7 @@ services:
       - RABBITMQ_PORT=5672
       - RABBITMQ_USER=guest
       - RABBITMQ_PASSWORD=guest
+      - MESSENGER_TRANSPORT_DSN=${MESSENGER_TRANSPORT_DSN}
     networks:
       - default_network
 
@@ -50,25 +51,31 @@ services:
     networks:
       - default_network
 
-#  worker:
-#    build:
-#      context: ./docker/php
-#    volumes:
-#      - .:/var/www/html
-#    depends_on:
-#      - rabbitmq
-#      - postgres
-#    command: php bin/worker notification:process
-#    environment:
-#      - TELEGRAM_TOKEN=${TELEGRAM_TOKEN}
-#      - DATABASE_URL=pgsql://library:library@postgres:5432/library
-#      - RABBITMQ_HOST=rabbitmq
-#      - RABBITMQ_PORT=5672
-#      - RABBITMQ_USER=guest
-#      - RABBITMQ_PASSWORD=guest
-#    restart: unless-stopped
-#    networks:
-#      - default_network
+
+  rabbitmq:
+      image: rabbitmq:3-management
+      ports:
+          - "5672:5672"
+          - "15672:15672"
+      environment:
+          RABBITMQ_DEFAULT_USER: guest
+          RABBITMQ_DEFAULT_PASS: guest
+      volumes:
+          - rabbitmq_data:/var/lib/rabbitmq
+      networks:
+          - default_network
+
+
+  redis:
+      image: redis
+      restart: always
+      ports:
+          - "6379:6379"
+      volumes:
+          - redis_data:/data
+      networks:
+          - default_network
+
 
 ####> doctrine/doctrine-bundle ###
 #  database:
@@ -91,6 +98,8 @@ services:
 
 volumes:
   postgres_data:
+  rabbitmq_data:
+  redis_data:
 
 networks:
   default_network:

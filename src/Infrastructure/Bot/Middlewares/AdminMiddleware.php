@@ -21,6 +21,8 @@ class AdminMiddleware
         $user = $bot->get('user');
         if ($user === null || !$user->isAdmin) {
             $bot->sendMessage('Access denied');
+            $bot->endConversation();
+            return;
         }
         $next($bot);
     }

@@ -8,11 +8,11 @@ use Dinargab\LibraryBot\Domain\Lending\Entity\Lending;
 class LendingDTO
 {
     public function __construct(
-        public string $id,
+        public int $id,
         public string $bookTitle,
         public string $bookAuthor,
         public string $userName,
-        public int $userTelegramId,
+        public string $userTelegramId,
         public string $issuedAt,
         public string $dueDate,
         public ?string $returnedAt,

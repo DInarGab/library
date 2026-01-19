@@ -6,10 +6,11 @@ namespace Dinargab\LibraryBot\Application\Book\UseCase;
 use Dinargab\LibraryBot\Application\Book\DTO\AddBookRequestDTO;
 use Dinargab\LibraryBot\Application\Shared\DTO\BookDTO;
 use Dinargab\LibraryBot\Domain\Book\Entity\BookCopy;
-use Dinargab\LibraryBot\Domain\Book\Factory\BookCopyFactoryInterface;
 use Dinargab\LibraryBot\Domain\Book\Factory\BookFactoryInterface;
 use Dinargab\LibraryBot\Domain\Book\Repository\BookCopyRepositoryInterface;
 use Dinargab\LibraryBot\Domain\Book\Repository\BookRepositoryInterface;
+use Dinargab\LibraryBot\Domain\Event\EventDispatcherInterface;
+use Dinargab\LibraryBot\Domain\Event\Events\BookAddedEvent;
 
 class AddBookUseCase
 {
@@ -17,6 +18,7 @@ class AddBookUseCase
         private BookRepositoryInterface $bookRepository,
         private BookCopyRepositoryInterface $bookCopyRepository,
         private BookFactoryInterface $bookFactory,
+        private EventDispatcherInterface $eventDispatcher,
     ) {}
 
     public function __invoke(
@@ -38,7 +40,13 @@ class AddBookUseCase
             $book->addCopy($bookCopy);
             $this->bookCopyRepository->save($bookCopy);
         }
-
+        $this->eventDispatcher->dispatch(new BookAddedEvent(
+            $book->getId(),
+            $book->getTitle(),
+            $book->getAuthor(),
+            $book->getIsbn()->getValue(),
+            1,
+        ));
         return BookDTO::fromEntity($book);
     }
 }
