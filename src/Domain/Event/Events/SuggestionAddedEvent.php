@@ -9,8 +9,8 @@ class SuggestionAddedEvent extends AbstractDomainEvent
         public readonly string $bookAuthor,
         public readonly string $bookTitle,
         public readonly string $userName,
-        public readonly string $comment,
-        public readonly string $sourceUrl,
+        public readonly ?string $comment,
+        public readonly ?string $sourceUrl,
     )
     {
         parent::__construct();

@@ -64,10 +64,10 @@ class SuggestionDetailPageCommand
             $text .= "*Ссылка:* {$suggestionDTO->sourceUrl}\n";
         }
         $text .= "*Комментарий предложившего:* $suggestionDTO->comment\n";
-        if ($suggestionDTO->adminComment && $suggestionDTO->status === BookSuggestionStatus::REJECTED) {
+        if ($suggestionDTO->adminComment && $suggestionDTO->status === BookSuggestionStatus::REJECTED->value) {
             $text .= "*Причина отказа*: $suggestionDTO->adminComment\n";
         }
-        if ($suggestionDTO->adminComment && $suggestionDTO->status === BookSuggestionStatus::APPROVED) {
+        if ($suggestionDTO->adminComment && $suggestionDTO->status === BookSuggestionStatus::APPROVED->value) {
             $text .= "*Комментарий администратора*: $suggestionDTO->adminComment\n";
         }
         $text .= "*Предложил:* $suggestionDTO->userName\n";

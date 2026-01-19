@@ -10,7 +10,7 @@ class SuggestionDTO
     public function __construct(
         public int $id,
         public string $userName,
-        public int $userTelegramId,
+        public string $userTelegramId,
         public ?string $isbn,
         public ?string $title,
         public ?string $author,

@@ -16,12 +16,10 @@ class BookCopy
     #[ORM\Column(type: 'integer')]
     #[ORM\GeneratedValue(strategy: 'IDENTITY')]
     private int $id;
-
     #[ORM\Column(type: 'string', length: 20, enumType: BookStatus::class)]
     private BookStatus $status;
     #[ORM\Column(type: 'datetime_immutable', name: 'created_at', nullable: false)]
     private DateTimeImmutable $createdAt;
-
     #[ORM\Column(type: 'string', length: 50, nullable: false, name: "inventory_number", unique: true)]
     private string $inventoryNumber;
     #[ORM\ManyToOne(targetEntity: Book::class, inversedBy: 'copies')]

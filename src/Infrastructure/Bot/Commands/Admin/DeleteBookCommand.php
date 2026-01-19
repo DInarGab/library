@@ -5,6 +5,7 @@ namespace Dinargab\LibraryBot\Infrastructure\Bot\Commands\Admin;
 
 use Dinargab\LibraryBot\Application\Book\DTO\DeleteBookRequestDTO;
 use Dinargab\LibraryBot\Application\Book\UseCase\DeleteBookUseCase;
+use DomainException;
 use SergiX44\Nutgram\Nutgram;
 use SergiX44\Nutgram\Telegram\Types\Keyboard\InlineKeyboardButton;
 use SergiX44\Nutgram\Telegram\Types\Keyboard\InlineKeyboardMarkup;
@@ -18,17 +19,22 @@ class DeleteBookCommand
     {
 
     }
+
     public function __invoke(Nutgram $bot, $bookId)
     {
+        $message = $bot->callbackQuery()?->message;
+
+        $messageText = "Книга успешно удалена";
         try {
             ($this->deleteBookUseCase)(new DeleteBookRequestDTO((int)$bookId));
-        } catch (\Exception $exception) {
-            $bot->sendMessage($exception->getMessage());
-            return;
+        } catch (DomainException $exception) {
+            $messageText = $exception->getMessage();
         }
 
-        $bot->sendMessage(
-            "Книга успешно удалена",
+        $bot->editMessageText(
+            $messageText,
+            $message->chat->id,
+            $message->message_id,
             reply_markup: InlineKeyboardMarkup::make()->addRow(
                 InlineKeyboardButton::make('❌ Закрыть', callback_data: 'close')
             )

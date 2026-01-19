@@ -48,4 +48,11 @@ framework:
                 senders: ['async']
                 options:
                     routing_key: 'event.lending.overdue'
-
+            'Dinargab\LibraryBot\Domain\Event\Events\SuggestionAddedEvent':
+                senders: [ 'async' ]
+                options:
+                    routing_key: 'event.suggestion.added'
+            'Dinargab\LibraryBot\Domain\Event\Events\SuggestionProcessedEvent':
+                senders: [ 'async' ]
+                options:
+                    routing_key: 'event.suggestion.processed'

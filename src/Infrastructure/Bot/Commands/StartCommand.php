@@ -12,7 +12,6 @@ class StartCommand
 {
     public function __construct(
         private GetOrCreateUserUseCase $getOrCreateUserUseCase,
-        private KeyboardFactory $keyboardFactory,
     )
     {
     }
@@ -26,14 +25,12 @@ class StartCommand
                 $user->username,
                 $user->first_name,
                 $user->last_name,
-                $user->id === getenv('TELEGRAM_ADMIN_ID')
+                (string) $user->id === trim(getenv('TELEGRAM_ADMIN_ID'))
             )
         );
 
         $text = "👋 Привет, *{$registeredUser->displayName}*!\n\n";
-        $text .= "Добро пожаловать в библиотечного бота! 📚\n\n";
-        $text .= "Используйте меню ниже или команду /help";
-
+        $text .= "Добро пожаловать в библиотечного бота! \n\n";
 
         $bot->sendMessage(
             text: $text,

@@ -39,7 +39,7 @@ class ListBooksCommand
             currentPage: $currentPage,
             totalPages: $result->maxPage,
             itemCallback: fn(BookDTO $book, $key) => InlineKeyboardButton::make(
-                text: $book->title,
+                text: ($key + 1) . ") $book->author \"$book->title\"",
                 callback_data: "book_detail:{$book->id}"
             ),
             paginationCallbackPrefix: self::COMMAND_PREFIX,

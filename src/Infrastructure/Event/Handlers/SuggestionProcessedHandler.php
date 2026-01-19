@@ -6,7 +6,9 @@ namespace Dinargab\LibraryBot\Infrastructure\Event\Handlers;
 use Dinargab\LibraryBot\Domain\Event\Events\BookAddedEvent;
 use Dinargab\LibraryBot\Domain\Event\Events\SuggestionProcessedEvent;
 use Dinargab\LibraryBot\Infrastructure\Notification\NotificationServiceInterface;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
+#[AsMessageHandler]
 class SuggestionProcessedHandler
 {
     public function __construct(

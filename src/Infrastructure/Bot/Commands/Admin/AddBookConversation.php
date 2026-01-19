@@ -128,7 +128,7 @@ class AddBookConversation extends BaseConversation
                 $this->isbn,
                 $this->description,
             ));
-
+            $this->deleteCallbackMessage($bot);
             $this->onSaveSuccess($bot, "*Книга успешно добавлена!*");
         } catch (Exception $e) {
             $this->onSaveError($bot, $e);

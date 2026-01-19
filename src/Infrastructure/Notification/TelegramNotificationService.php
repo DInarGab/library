@@ -33,7 +33,7 @@ class TelegramNotificationService implements NotificationServiceInterface
             $page++;
 
             foreach ($usersList->users as $userDto) {
-                $this->notifyUser($userDto->id, $message);
+                $this->notifyUser($userDto->telegramId, $message);
             }
             $totalPages = $usersList->totalPages;
             //Спим секунду, чтобы не нарваться на лимиты

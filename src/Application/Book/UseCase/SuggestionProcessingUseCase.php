@@ -47,7 +47,7 @@ class SuggestionProcessingUseCase
             $suggestion->getTitle(),
             $suggestion->getSourceUrl(),
             $suggestionRequestDTO->suggestionStatus === BookSuggestionStatus::APPROVED,
-
+            $suggestion->getAdminComment()
         ));
         return SuggestionDTO::fromEntity($suggestion);
     }

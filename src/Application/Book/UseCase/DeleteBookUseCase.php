@@ -9,34 +9,38 @@ use Dinargab\LibraryBot\Domain\Event\EventDispatcherInterface;
 use Dinargab\LibraryBot\Domain\Event\Events\BookDeletedEvent;
 use Dinargab\LibraryBot\Domain\Exception\BookNotFoundException;
 use Dinargab\LibraryBot\Domain\Lending\Repository\LendingRepositoryInterface;
+use DomainException;
 
 class DeleteBookUseCase
 {
     public function __construct(
-        private BookRepositoryInterface $bookRepository,
+        private BookRepositoryInterface    $bookRepository,
         private LendingRepositoryInterface $lendingRepository,
-        private EventDispatcherInterface $eventDispatcher
-    ) {}
+        private EventDispatcherInterface   $eventDispatcher
+    )
+    {
+    }
 
 
     public function __invoke(
         DeleteBookRequestDTO $deleteBookRequestDTO
-    ):void
+    ): void
     {
         $book = $this->bookRepository->findById($deleteBookRequestDTO->bookId);
 
         if ($book === null) {
-            throw new BookNotFoundException("Book with ID {$deleteBookRequestDTO->bookId} not found");
+            throw new BookNotFoundException("Книга с ID:$deleteBookRequestDTO->bookId не найдена");
         }
 
         foreach ($book->getCopies() as $copy) {
             $activeLending = $this->lendingRepository->findActiveByBookCopy($copy);
             if ($activeLending !== null) {
-                throw new \DomainException(
-                    "Cannot delete book '{$book->getTitle()}': there are active lendings"
+                throw new DomainException(
+                    "Невозможно удалить книгу '{$book->getTitle()}': есть выданные копии"
                 );
             }
         }
+
         $bookTitle = $book->getTitle();
         $bookAuthor = $book->getAuthor();
         $bookId = $book->getId();

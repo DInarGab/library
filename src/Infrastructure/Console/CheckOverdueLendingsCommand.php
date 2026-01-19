@@ -3,9 +3,8 @@ declare(strict_types=1);
 
 namespace Dinargab\LibraryBot\Infrastructure\Console;
 
-use Dinargab\LibraryBot\Domain\Event\EventDispatcherInterface;
-use Dinargab\LibraryBot\Domain\Event\Events\LendingOverdueEvent;
-use Dinargab\LibraryBot\Domain\Lending\Repository\LendingRepositoryInterface;
+use Dinargab\LibraryBot\Application\Lending\UseCase\GetOverdueLendingsUseCase;
+use Dinargab\LibraryBot\Application\Shared\DTO\LendingDTO;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -18,36 +17,27 @@ use Symfony\Component\Console\Output\OutputInterface;
 class CheckOverdueLendingsCommand extends Command
 {
     public function __construct(
-        private readonly LendingRepositoryInterface $lendingRepository,
-        private readonly EventDispatcherInterface $eventDispatcher
+        private readonly GetOverdueLendingsUseCase $getOverdueLendingsUseCase,
     ) {
         parent::__construct();
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $overdueLendings = $this->lendingRepository->findOverdue();
+
+        /** @var array<LendingDTO> $overdueLendings */
+        $overdueLendings = ($this->getOverdueLendingsUseCase)();
 
         $output->writeln(sprintf('Found %d overdue lendings', count($overdueLendings)));
 
         foreach ($overdueLendings as $lending) {
-            $lending->markAsOverdue();
-            $this->lendingRepository->save($lending);
-
-            $this->eventDispatcher->dispatch(new LendingOverdueEvent(
-                lendingId: $lending->getId(),
-                bookId: $lending->getBookCopy()->getBook()->getId(),
-                bookTitle: $lending->getBookCopy()->getBook()->getTitle(),
-                userId: $lending->getUser()->getId(),
-                userTelegramId: (string) $lending->getUser()->getTelegramId(),
-                daysOverdue: abs($lending->getDaysUntilDue())
-            ));
 
             $output->writeln(sprintf(
-                '  - Книга #%d: %s (просрочена на %d дней/дня)',
-                $lending->getId(),
-                $lending->getBookCopy()->getBook()->getTitle(),
-                abs($lending->getDaysUntilDue())
+                '  - Книга #%d: %s - %s (просрочена на %d дней/дня)',
+                $lending->id,
+                $lending->bookAuthor,
+                $lending->bookTitle,
+                $lending->daysUntilDue
             ));
         }
 

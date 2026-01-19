@@ -14,6 +14,6 @@ class SuggestionProcessedEvent extends AbstractDomainEvent
         public readonly string $adminComment
     )
     {
-
+        parent::__construct();
     }
 }
