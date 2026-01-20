@@ -53,7 +53,7 @@ class ListLendingsCommand
             currentPage: $currentPage,
             totalPages: $result->maxPage,
             itemCallback: fn(LendingDTO $lending, $key) => InlineKeyboardButton::make(
-                text: "$key) $lending->userName: $lending->status - $lending->bookAuthor \"$lending->bookTitle\"\n Вернуть до: $lending->dueDate",
+                text: "$key) $lending->userName: $lending->statusDisplayValue - $lending->bookAuthor \"$lending->bookTitle\"\n Вернуть до: $lending->dueDate",
                 callback_data: LendingsDetailPageCommand::COMMAND_PREFIX . ":{$lending->id}"
             ),
             paginationCallbackPrefix: self::COMMAND_PREFIX,

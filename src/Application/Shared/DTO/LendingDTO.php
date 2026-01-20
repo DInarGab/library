@@ -18,7 +18,8 @@ class LendingDTO
         public ?string $returnedAt,
         public string $status,
         public int $daysUntilDue,
-        public bool $isOverdue
+        public bool $isOverdue,
+        public string $statusDisplayValue,
     ) {}
 
     public static function fromEntity(Lending $lending): self
@@ -33,6 +34,7 @@ class LendingDTO
             dueDate: $lending->getDueDate()->format('Y-m-d'),
             returnedAt: $lending->getReturnedAt()?->format('Y-m-d'),
             status: $lending->getStatus()->value,
+            statusDisplayValue: $lending->getStatus()->getLabel(),
             daysUntilDue: $lending->getDaysUntilDue(),
             isOverdue: $lending->isOverdue()
         );
