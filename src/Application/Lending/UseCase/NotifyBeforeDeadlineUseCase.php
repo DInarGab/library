@@ -4,17 +4,20 @@ declare(strict_types=1);
 namespace Dinargab\LibraryBot\Application\Lending\UseCase;
 
 use Dinargab\LibraryBot\Application\Lending\DTO\NotifyBeforeDeadlineResponseDTO;
+use Dinargab\LibraryBot\Application\Shared\DTO\LendingDTO;
 use Dinargab\LibraryBot\Domain\Event\EventDispatcherInterface;
 use Dinargab\LibraryBot\Domain\Event\Events\LendingDeadlineNearEvent;
+use Dinargab\LibraryBot\Domain\Lending\Entity\Lending;
 use Dinargab\LibraryBot\Domain\Lending\Repository\LendingRepositoryInterface;
 
 class NotifyBeforeDeadlineUseCase
 {
 
     private const DAYS_UNTIL_DEADLINE = 2;
+
     public function __construct(
         private LendingRepositoryInterface $lendingRepository,
-        private EventDispatcherInterface $eventDispatcher
+        private EventDispatcherInterface   $eventDispatcher
     )
     {
 
@@ -29,16 +32,16 @@ class NotifyBeforeDeadlineUseCase
             return null;
         }
 
-        foreach ($dueSoonLendings as $dueSoonLending) {
-            $book = $dueSoonLending->getBookCopy()->getBook();
+        $lendings = array_map(fn(Lending $lending) => LendingDTO::fromEntity($lending), $dueSoonLendings);
+        foreach ($lendings as $dueSoonLending) {
             $this->eventDispatcher->dispatch(new LendingDeadlineNearEvent(
-                $book->getAuthor(),
-                $book->getTitle(),
-                $dueSoonLending->getUser()->getTelegramId()->getValue(),
-                $dueSoonLending->getDaysUntilDue(),
-                $dueSoonLending->getDueDate(),
+                $dueSoonLending->bookAuthor,
+                $dueSoonLending->bookTitle,
+                $dueSoonLending->userTelegramId,
+                $dueSoonLending->daysUntilDue,
+                $dueSoonLending->dueDate,
             ));
         }
-        return new NotifyBeforeDeadlineResponseDTO($dueSoonLendings);
+        return new NotifyBeforeDeadlineResponseDTO($lendings);
     }
 }

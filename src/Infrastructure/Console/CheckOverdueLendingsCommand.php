@@ -28,7 +28,7 @@ class CheckOverdueLendingsCommand extends Command
         /** @var array<LendingDTO> $overdueLendings */
         $overdueLendings = ($this->getOverdueLendingsUseCase)();
 
-        $output->writeln(sprintf('Found %d overdue lendings', count($overdueLendings)));
+        $output->writeln(sprintf('Нашел %d просроченных выдач', count($overdueLendings)));
 
         foreach ($overdueLendings as $lending) {
 
