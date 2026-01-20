@@ -233,7 +233,7 @@ class SuggestBookConversation extends BaseConversation
             );
 
             $suggestion = ($this->suggestBookUseCase)($dto);
-
+            $this->deleteCallbackMessage($bot);
             $this->onSaveSuccess(
                 $bot,
                 "*Спасибо за предложение!*\n\n" .
