@@ -69,7 +69,7 @@ services:
         build:
             context: ./docker/php
         command: >
-            sh -c "php bin/console messenger:setup-transports &&
+            sh -c "sleep(10) && php bin/console messenger:setup-transports &&
                    php bin/console messenger:consume async"
         volumes:
             - .:/var/www/html
