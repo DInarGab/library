@@ -1,88 +1,120 @@
 services:
 
-  nginx:
-    build:
-      context: ./docker/nginx
-      dockerfile: dockerfile
-    image: hw/nginx
-    # проброс портов
-    ports:
-      - "80:80"
-    volumes:
-      - .:/var/www/html
-    depends_on:
-      php:
-        condition: service_started
-    networks:
-      - default_network
+    nginx:
+        build:
+            context: ./docker/nginx
+            dockerfile: dockerfile
+        image: hw/nginx
+        # проброс портов
+        ports:
+            - "80:80"
+        volumes:
+            - .:/var/www/html
+        depends_on:
+            php:
+                condition: service_started
+        networks:
+            - default_network
 
 
-  php:
-    build:
-      context: ./docker/php
-    volumes:
-      - .:/var/www/html
-    depends_on:
-      - postgres
-    environment:
-      - TELEGRAM_TOKEN=${TELEGRAM_TOKEN}
-      - TELEGRAM_BOT_USERNAME=${TELEGRAM_BOT_USERNAME}
-      - TELEGRAM_ADMIN_ID=${TELEGRAM_ADMIN_ID}
-      - DATABASE_URL=pgsql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
-      - RABBITMQ_HOST=${RABBITMQ_HOST}
-      - RABBITMQ_PORT=${RABBITMQ_PORT}
-      - RABBITMQ_USER=${RABBITMQ_USER}
-      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
-      - MESSENGER_TRANSPORT_DSN=amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@${RABBITMQ_HOST}:${RABBITMQ_PORT}/%2f/messages
-      - REDIS_URL=${REDIS_URL}
-    networks:
-      - default_network
+    php:
+        build:
+            context: ./docker/php
+        volumes:
+            - .:/var/www/html
+        depends_on:
+            - postgres
+        environment:
+            - TELEGRAM_TOKEN=${TELEGRAM_TOKEN}
+            - TELEGRAM_BOT_USERNAME=${TELEGRAM_BOT_USERNAME}
+            - TELEGRAM_ADMIN_ID=${TELEGRAM_ADMIN_ID}
+            - DATABASE_URL=pgsql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+            - RABBITMQ_HOST=${RABBITMQ_HOST}
+            - RABBITMQ_PORT=${RABBITMQ_PORT}
+            - RABBITMQ_USER=${RABBITMQ_USER}
+            - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
+            - MESSENGER_TRANSPORT_DSN=amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@${RABBITMQ_HOST}:${RABBITMQ_PORT}/%2f/messages
+            - REDIS_URL=${REDIS_URL}
+        networks:
+            - default_network
 
-  postgres:
-    image: postgres:16
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
-    ports:
-      - "5432:5432"
-    networks:
-      - default_network
-
-
-  rabbitmq:
-      image: rabbitmq:3-management
-      ports:
-          - "5672:5672"
-          - "15672:15672"
-      environment:
-          RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
-          RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
-      volumes:
-          - rabbitmq_data:/var/lib/rabbitmq
-      networks:
-          - default_network
+    postgres:
+        image: postgres:16
+        environment:
+            POSTGRES_DB: ${POSTGRES_DB}
+            POSTGRES_USER: ${POSTGRES_USER}
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+        volumes:
+            - postgres_data:/var/lib/postgresql/data
+            - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+        ports:
+            - "5432:5432"
+        networks:
+            - default_network
 
 
-  redis:
-      image: redis
-      restart: always
-      ports:
-          - "6379:6379"
-      volumes:
-          - redis_data:/data
-      networks:
-          - default_network
+    rabbitmq:
+        image: rabbitmq:3-management
+        ports:
+            - "5672:5672"
+            - "15672:15672"
+        environment:
+            RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+            RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
+        healthcheck:
+            test: [ "CMD", "rabbitmq-diagnostics", "check_running" ]
+            interval: 10s
+            timeout: 5s
+            retries: 5
+        volumes:
+            - rabbitmq_data:/var/lib/rabbitmq
+        networks:
+            - default_network
 
+
+    redis:
+        image: redis
+        restart: always
+        ports:
+            - "6379:6379"
+        volumes:
+            - redis_data:/data
+        networks:
+            - default_network
+
+    php-notification-worker:
+        build:
+            context: ./docker/php
+        command: >
+            sh -c "php bin/console messenger:setup-transports &&
+                   php bin/console messenger:consume async"
+        volumes:
+            - .:/var/www/html
+        depends_on:
+            postgres:
+                condition: service_started
+            rabbitmq:
+                condition: service_healthy
+
+        environment:
+            - TELEGRAM_TOKEN=${TELEGRAM_TOKEN}
+            - TELEGRAM_BOT_USERNAME=${TELEGRAM_BOT_USERNAME}
+            - TELEGRAM_ADMIN_ID=${TELEGRAM_ADMIN_ID}
+            - DATABASE_URL=pgsql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+            - RABBITMQ_HOST=${RABBITMQ_HOST}
+            - RABBITMQ_PORT=${RABBITMQ_PORT}
+            - RABBITMQ_USER=${RABBITMQ_USER}
+            - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
+            - MESSENGER_TRANSPORT_DSN=amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@${RABBITMQ_HOST}:${RABBITMQ_PORT}/%2f/messages
+            - REDIS_URL=${REDIS_URL}
+        networks:
+            - default_network
 
 volumes:
-  postgres_data:
-  rabbitmq_data:
-  redis_data:
+    postgres_data:
+    rabbitmq_data:
+    redis_data:
 
 networks:
-  default_network:
-    driver: bridge
+    default_network:
+        driver: bridge

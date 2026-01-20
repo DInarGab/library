@@ -34,8 +34,4 @@ jobs:
           docker compose -f docker-compose.prod.yml exec --user root php composer install --no-interaction
           docker compose -f docker-compose.prod.yml exec --user root php php bin/console doctrine:migrations:migrate --no-interaction
           docker compose -f docker-compose.prod.yml exec -d --user root php php bin/console nutgram:run
-          #Надо дождаться запуска rabbitmq?
-          sleep(10)
-          docker compose -f docker-compose.prod.yml exec --user root php bin/console messenger:setup-transports
-          docker compose -f docker-compose.prod.yml exec -d --user root php php bin/console messenger:consume async
 

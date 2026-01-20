@@ -59,6 +59,25 @@ services:
             - rabbitmq_data:/var/lib/rabbitmq
         networks:
             - default_network
+        healthcheck:
+            test: [ "CMD", "rabbitmq-diagnostics", "check_running" ]
+            interval: 10s
+            timeout: 5s
+            retries: 5
+
+    php-notification-worker:
+        build:
+            context: ./docker/php
+        command: >
+            sh -c "php bin/console messenger:setup-transports &&
+                   php bin/console messenger:consume async"
+        volumes:
+            - .:/var/www/html
+        depends_on:
+            postgres:
+                condition: service_started
+            rabbitmq:
+                condition: service_healthy
 
 
     redis:
