@@ -8,6 +8,7 @@ use Dinargab\LibraryBot\Application\Book\UseCase\GetBookUseCase;
 use Dinargab\LibraryBot\Application\Shared\DTO\BookDTO;
 use Dinargab\LibraryBot\Application\Shared\DTO\UserDTO;
 use Dinargab\LibraryBot\Domain\Exception\BookNotFoundException;
+use Dinargab\LibraryBot\Infrastructure\Bot\Commands\Admin\DeleteBookCommand;
 use Dinargab\LibraryBot\Infrastructure\Bot\Service\KeyboardService;
 use SergiX44\Nutgram\Nutgram;
 use SergiX44\Nutgram\Telegram\Types\Keyboard\InlineKeyboardButton;
@@ -15,6 +16,8 @@ use SergiX44\Nutgram\Telegram\Types\Keyboard\InlineKeyboardMarkup;
 
 class BookDetailPageCommand
 {
+
+    public const COMMAND_PREFIX = 'book_detail';
     private Nutgram $bot;
     public function __construct(
         private GetBookUseCase  $useCase,
@@ -58,7 +61,7 @@ class BookDetailPageCommand
         if ($user->isAdmin) {
             $additionalButton = [
                 InlineKeyboardButton::make('Выдать книгу', callback_data: "lend_book:$bookDetail->id"),
-                InlineKeyboardButton::make('Удалить книгу', callback_data: "delete_book:$bookDetail->id"),
+                InlineKeyboardButton::make('Удалить книгу', callback_data: DeleteBookCommand::COMMAND_PREFIX . ":$bookDetail->id"),
             ];
 
         }

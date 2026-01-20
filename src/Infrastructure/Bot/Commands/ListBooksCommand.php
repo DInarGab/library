@@ -12,13 +12,12 @@ use SergiX44\Nutgram\Telegram\Types\Keyboard\InlineKeyboardButton;
 
 class ListBooksCommand
 {
-    private int $currentPage = 1;
-    public const COMMAND_PREFIX = "book-list";
+    public const COMMAND_PREFIX = "list_books";
     private const PER_PAGE = 5;
 
     public function __construct(
         private ListAvailableBooksUseCase $listAvailableBooksUseCase,
-        private KeyboardService $paginationKeyboardService
+        private KeyboardService           $paginationKeyboardService
     )
     {
     }
@@ -40,7 +39,7 @@ class ListBooksCommand
             totalPages: $result->maxPage,
             itemCallback: fn(BookDTO $book, $key) => InlineKeyboardButton::make(
                 text: ($key + 1) . ") $book->author \"$book->title\"",
-                callback_data: "book_detail:{$book->id}"
+                callback_data: BookDetailPageCommand::COMMAND_PREFIX . ":$book->id"
             ),
             paginationCallbackPrefix: self::COMMAND_PREFIX,
         );

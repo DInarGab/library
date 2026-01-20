@@ -13,6 +13,8 @@ use SergiX44\Nutgram\Telegram\Types\Keyboard\InlineKeyboardMarkup;
 class DeleteBookCommand
 {
 
+    public const COMMAND_PREFIX = 'delete_book';
+
     public function __construct(
         private DeleteBookUseCase $deleteBookUseCase
     )

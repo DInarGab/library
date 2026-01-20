@@ -14,6 +14,8 @@ use SergiX44\Nutgram\Nutgram;
 
 class AddBookConversation extends BaseConversation
 {
+    public const COMMAND_PREFIX = 'add_book';
+
     public string $author = '';
     public string $title = '';
     public string $description = '';
@@ -28,7 +30,7 @@ class AddBookConversation extends BaseConversation
 
     protected function getCallbackPrefix(): string
     {
-        return 'add_book';
+        return self::COMMAND_PREFIX;
     }
 
     protected function resetState(): void

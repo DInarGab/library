@@ -26,10 +26,10 @@ $bot->middleware(UserAuthMiddleware::class);
 $bot->onCommand('start', StartCommand::class);
 
 //Список книг и описание книги
-$bot->onCommand('list_books', ListBooksCommand::class);
-$bot->onCallbackQueryData('book_detail:{bookId}', BookDetailPageCommand::class);
+$bot->onCommand(ListBooksCommand::COMMAND_PREFIX, ListBooksCommand::class);
 $bot->onCallbackQueryData(ListBooksCommand::COMMAND_PREFIX . ':{page}', ListBooksCommand::class);
-$bot->onCallbackQueryData('lending_detail:{lendingId}', LendingsDetailPageCommand::class);
+$bot->onCallbackQueryData(BookDetailPageCommand::COMMAND_PREFIX . ':{bookId}', BookDetailPageCommand::class);
+$bot->onCallbackQueryData(LendingsDetailPageCommand::COMMAND_PREFIX . ':{lendingId}', LendingsDetailPageCommand::class);
 //Список выдач книг и описание выдач
 $bot->onCommand(ListLendingsCommand::COMMAND_PREFIX, ListLendingsCommand::class);
 $bot->onCallbackQueryData(ListLendingsCommand::COMMAND_PREFIX . ':{page}', ListLendingsCommand::class);
@@ -44,13 +44,12 @@ $bot->onCallbackQueryData(ListSuggestionsCommand::COMMAND_PREFIX . ':{page}', Li
 $bot->onCallbackQueryData(SuggestionDetailPageCommand::SUGGESTION_DETAIL_CALLBACK . ":{suggestionId}", SuggestionDetailPageCommand::class);
 
 $bot->group(function ($bot) {
-    $bot->onCommand('add_book', AddBookConversation::class);
+    $bot->onCommand(AddBookConversation::COMMAND_PREFIX, AddBookConversation::class);
 
-    $bot->onCallbackQueryData('delete_book:{bookId}', DeleteBookCommand::class);
+    $bot->onCallbackQueryData(DeleteBookCommand::COMMAND_PREFIX . ':{bookId}', DeleteBookCommand::class);
     $bot->onCallbackQueryData(LendBookConversation::CALLBACK_PREFIX . ':{bookId}', LendBookConversation::class);
     $bot->onCallbackQueryData(ReturnBookCommand::RETURN_BOOK_PREFIX . ":{lendingId}", ReturnBookCommand::class);
     //Отклонить и принять предложение
-
     $bot->onCallbackQueryData(SuggestionProcessingCommand::PROCESS_SUGGESTION_CALLBACK . ":{suggestionId}:{status}", SuggestionProcessingCommand::class);
     $bot->onCallbackQueryData(SuggestionProcessingCommand::PROCESS_SUGGESTION_CALLBACK . ":{suggestionId}:{status}", SuggestionProcessingCommand::class);
 

@@ -20,6 +20,8 @@ class LendingsDetailPageCommand
     private Nutgram $bot;
     private UserDTO $user;
 
+    public const COMMAND_PREFIX = 'lending_detail';
+
     public function __construct(
         private GetLendingUseCase  $getLendingUseCase,
     )
