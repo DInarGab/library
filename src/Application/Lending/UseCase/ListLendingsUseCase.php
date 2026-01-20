@@ -27,10 +27,12 @@ class ListLendingsUseCase
             $lendingsArray = $this->lendingRepository->findAllByUser($getLendingsRequestDTO->userId);
             $lendingsCount = $this->lendingRepository->countAll($getLendingsRequestDTO->userId);
         }
+        $maxPage = (int)ceil($lendingsCount / $getLendingsRequestDTO->limit);
 
         return new ListLendingsResponseDTO(
             array_map(fn(Lending $lending) => LendingDTO::fromEntity($lending), $lendingsArray) ,
             $getLendingsRequestDTO->page,
-            (int)ceil($lendingsCount / $getLendingsRequestDTO->limit));
+            $maxPage === 0 ? 1 : $maxPage,
+        );
     }
 }

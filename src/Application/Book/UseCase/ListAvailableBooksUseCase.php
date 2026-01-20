@@ -19,6 +19,7 @@ class ListAvailableBooksUseCase
     {
         $books = $this->bookRepository->findAll($booksRequestDTO->page, $booksRequestDTO->limit);
         $totalItems = $this->bookRepository->getCount();
+        $maxPage = (int) ceil($totalItems / $booksRequestDTO->limit);
 
         return new ListBooksResponseDTO(
             books: array_map(
@@ -26,7 +27,7 @@ class ListAvailableBooksUseCase
                 $books
             ),
             page: $booksRequestDTO->page,
-            maxPage: (int) ceil($totalItems / $booksRequestDTO->limit)
+            maxPage: $maxPage === 0 ? 1 : $maxPage,
         );
     }
 }

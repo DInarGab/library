@@ -40,7 +40,7 @@ class GetUsersListUseCase
         return new GetUsersListResponseDTO(
             $usersList,
             $getUsersListRequestDTO->page,
-            $totalPages
+            $totalPages === 0 ? 0 : $totalPages,
         );
     }
 }

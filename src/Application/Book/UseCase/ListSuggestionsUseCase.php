@@ -30,11 +30,12 @@ class ListSuggestionsUseCase
             $suggestions = $this->bookSuggestionRepository->findPending($bookSuggestionRequestDTO->page, $bookSuggestionRequestDTO->limit);
             $totalItems = $this->bookSuggestionRepository->count(["status" => BookSuggestionStatus::PENDING]);
         }
+        $maxPage = (int) ceil($totalItems / $bookSuggestionRequestDTO->limit);
 
         return new ListSuggestionResponseDTO(
             array_map(fn(BookSuggestion $suggestion) => SuggestionDTO::fromEntity($suggestion), $suggestions),
             $bookSuggestionRequestDTO->page,
-            (int) ceil($totalItems / $bookSuggestionRequestDTO->limit)
+            maxPage: $maxPage === 0 ? 1 : $maxPage,
         );
     }
 }
