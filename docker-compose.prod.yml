@@ -69,7 +69,7 @@ services:
         build:
             context: ./docker/php
         command: >
-            sh -c "sleep(10) && php bin/console messenger:setup-transports &&
+            sh -c "sleep 10  && php bin/console messenger:setup-transports &&
                    php bin/console messenger:consume async"
         volumes:
             - .:/var/www/html
@@ -78,7 +78,19 @@ services:
                 condition: service_started
             rabbitmq:
                 condition: service_healthy
-
+        environment:
+            - TELEGRAM_TOKEN=${TELEGRAM_TOKEN}
+            - TELEGRAM_BOT_USERNAME=${TELEGRAM_BOT_USERNAME}
+            - TELEGRAM_ADMIN_ID=${TELEGRAM_ADMIN_ID}
+            - DATABASE_URL=pgsql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+            - RABBITMQ_HOST=${RABBITMQ_HOST}
+            - RABBITMQ_PORT=${RABBITMQ_PORT}
+            - RABBITMQ_USER=${RABBITMQ_USER}
+            - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
+            - MESSENGER_TRANSPORT_DSN=amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:${RABBITMQ_PORT}/%2f/messages
+            - REDIS_URL=${REDIS_URL}
+        networks:
+            - default_network
 
     redis:
         image: redis
