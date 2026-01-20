@@ -33,6 +33,6 @@ jobs:
 
           docker compose exec --user root php composer install --no-interaction
           docker compose exec --user root php php bin/console doctrine:migrations:migrate --no-interaction
-          docker compose exec --user root php php bin/console nutgram:run
-          docker compose exec --user root php php bin/console messenger:consume async
+          docker compose exec -d --user root php php bin/console nutgram:run
+          docker compose exec -d --user root php php bin/console messenger:consume async
 
