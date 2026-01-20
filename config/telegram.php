@@ -22,9 +22,6 @@ use SergiX44\Nutgram\Nutgram;
 
 Conversation::refreshOnDeserialize();
 
-//$bot->onCommand('start', function (Nutgram $bot) {
-//    return $bot->sendMessage('Hello, world!');
-//})->description('The start command!');
 $bot->middleware(UserAuthMiddleware::class);
 $bot->onCommand('start', StartCommand::class);
 
@@ -43,7 +40,7 @@ $bot->onCallbackQueryData(SuggestBookConversation::COMMAND_PREFIX, SuggestBookCo
 
 //Список предложений
 $bot->onCommand(ListSuggestionsCommand::COMMAND_PREFIX, ListSuggestionsCommand::class);
-$bot->onCallbackQueryData(ListSuggestionsCommand::COMMAND_PREFIX, ListSuggestionsCommand::class);
+$bot->onCallbackQueryData(ListSuggestionsCommand::COMMAND_PREFIX . ':{page}', ListSuggestionsCommand::class);
 $bot->onCallbackQueryData(SuggestionDetailPageCommand::SUGGESTION_DETAIL_CALLBACK . ":{suggestionId}", SuggestionDetailPageCommand::class);
 
 $bot->group(function ($bot) {
@@ -57,14 +54,11 @@ $bot->group(function ($bot) {
     $bot->onCallbackQueryData(SuggestionProcessingCommand::PROCESS_SUGGESTION_CALLBACK . ":{suggestionId}:{status}", SuggestionProcessingCommand::class);
     $bot->onCallbackQueryData(SuggestionProcessingCommand::PROCESS_SUGGESTION_CALLBACK . ":{suggestionId}:{status}", SuggestionProcessingCommand::class);
 
-//    $bot->onCallbackQueryData(SuggestionDetailPageCommand::SUGGESTION_DECLINED_CALLBACK . ":{suggestionId}", [SuggestionProcessingCommand::class, "decline"]);
-//    $bot->onCallbackQueryData(SuggestionDetailPageCommand::SUGGESTION_APPROVED_CALLBACK . ":{suggestionId}", [SuggestionProcessingCommand::class, "approve"]);
-
 })->middleware(AdminMiddleware::class);
 
+//Кнопка закрыть
 $bot->onCallbackQueryData('close', function (Nutgram $bot) {
     $message = $bot->callbackQuery()?->message;
-
     if ($message) {
         try {
             $bot->deleteMessage(
@@ -75,10 +69,10 @@ $bot->onCallbackQueryData('close', function (Nutgram $bot) {
             //Ничего не делаем, сообщение недоступно
         }
     }
-
     $bot->answerCallbackQuery();
+    $bot->endConversation();
 });
-
+//Кнопки с номером текущей страницы ничего не делают
 $bot->onCallbackQueryData('current_page', function (Nutgram $bot) {
     $bot->answerCallbackQuery();
 });

@@ -20,10 +20,10 @@ class Lending
     #[ORM\GeneratedValue(strategy: 'IDENTITY')]
     private int $id;
 
-    #[ORM\ManyToOne(targetEntity: BookCopy::class, inversedBy: 'lendings')]
+    #[ORM\ManyToOne(targetEntity: BookCopy::class)]
     private BookCopy $bookCopy;
 
-    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'lendings')]
+    #[ORM\ManyToOne(targetEntity: User::class)]
     private User $user;
 
     #[ORM\Column(type: 'datetime_immutable', nullable: false, name: 'issued_at')]

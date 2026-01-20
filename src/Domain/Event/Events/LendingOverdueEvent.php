@@ -7,9 +7,8 @@ class LendingOverdueEvent extends AbstractDomainEvent
 {
     public function __construct(
         public readonly int    $lendingId,
-        public readonly int    $bookId,
+        public readonly string    $bookAuthor,
         public readonly string $bookTitle,
-        public readonly int    $userId,
         public readonly string $userTelegramId,
         public readonly int    $daysOverdue
     )

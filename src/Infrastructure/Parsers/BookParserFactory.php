@@ -1,11 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace Dinargab\LibraryBot\Application\Book\Factory;
+namespace Dinargab\LibraryBot\Infrastructure\Parsers;
 
 use Dinargab\LibraryBot\Domain\Book\Factory\BookParserFactoryInterface;
 use Dinargab\LibraryBot\Domain\Service\BookParserInterface;
-use Dinargab\LibraryBot\Infrastructure\Parsers\LabirynthParser\LabirintParser;
+use DOMXPath;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class BookParserFactory implements BookParserFactoryInterface
@@ -23,7 +23,9 @@ class BookParserFactory implements BookParserFactoryInterface
 
         return match ($hostname) {
             "www.labirint.ru", "labirint.ru" => new LabirintParser($this->client),
+            "www.chitai-gorod.ru", "chitai-gorod.ru" => new ChitayGorodParser($this->client),
             default => throw new \InvalidArgumentException('Can not parse supplied book url')
         };
     }
+
 }

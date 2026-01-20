@@ -8,6 +8,7 @@ use Dinargab\LibraryBot\Application\Shared\DTO\LendingDTO;
 use Dinargab\LibraryBot\Application\Shared\DTO\UserDTO;
 use Dinargab\LibraryBot\Domain\Book\GetLendingUseCase;
 use Dinargab\LibraryBot\Domain\Exception\LendingNotFoundException;
+use Dinargab\LibraryBot\Domain\Lending\ValueObject\LendingStatus;
 use Dinargab\LibraryBot\Domain\User\Entity\User;
 use Dinargab\LibraryBot\Infrastructure\Bot\Commands\Admin\ReturnBookCommand;
 use SergiX44\Nutgram\Nutgram;
@@ -61,15 +62,15 @@ class LendingsDetailPageCommand
     {
 
         $keyboard = InlineKeyboardMarkup::make();
-
-        if ($this->user->isAdmin) {
+        $bookBorowedOrOverdue = $lendingDetail->status === LendingStatus::LENT->value || $lendingDetail->status === LendingStatus::OVERDUE->value;
+        if ($this->user->isAdmin && $bookBorowedOrOverdue) {
             $keyboard->addRow(
                 InlineKeyboardButton::make('Вернуть книгу', callback_data: ReturnBookCommand::RETURN_BOOK_PREFIX . ":$lendingDetail->id")
             );
         }
         $keyboard->addRow(
             InlineKeyboardButton::make("Назад", callback_data: ListLendingsCommand::COMMAND_PREFIX . ":1"),
-            InlineKeyboardButton::make("Закрыть", callback_data: "close")
+            InlineKeyboardButton::make("❌ Закрыть", callback_data: "close")
         );
 
         return $keyboard;

@@ -1,12 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace Dinargab\LibraryBot\Infrastructure\Parsers\LabirynthParser;
+namespace Dinargab\LibraryBot\Infrastructure\Parsers;
 
 use Dinargab\LibraryBot\Application\Shared\DTO\ParsedBookDTO;
 use Dinargab\LibraryBot\Domain\Service\BookParserInterface;
-use DOMXPath;
 use DOMDocument;
+use DOMXPath;
 use InvalidArgumentException;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
@@ -56,7 +56,7 @@ class LabirintParser implements BookParserInterface
         if ($elements && $elements->length > 0) {
             // Получаем первый найденный элемент
             $firstElement = $elements->item(0);
-            $description = $firstElement->nodeValue;
+            $description = $firstElement->textContent;
         }
 
         return $description;

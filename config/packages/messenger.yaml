@@ -14,13 +14,6 @@ framework:
 #                                - telegram_update
             async:
                 dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
-                options:
-                    exchange:
-                        name: library_events
-                        type: topic
-                    queues:
-                        library_events_queue:
-                            binding_keys: ['event.*']
                 retry_strategy:
                     max_retries: 3
                     delay: 1000
@@ -28,31 +21,11 @@ framework:
 
         # Маршрутизация сообщений к транспортам
         routing:
-            'Dinargab\LibraryBot\Domain\Event\Events\BookAddedEvent':
-                senders: ['async']
-                options:
-                    routing_key: 'event.book_added'
-            'Dinargab\LibraryBot\Domain\Event\Events\BookDeletedEvent':
-                senders: ['async']
-                options:
-                    routing_key: 'event.book_deleted'
-            'Dinargab\LibraryBot\Domain\Event\Events\BookLentEvent':
-                senders: ['async']
-                options:
-                    routing_key: 'event.book_lent'
-            'Dinargab\LibraryBot\Domain\Event\Events\BookReturnedEvent':
-                senders: ['async']
-                options:
-                    routing_key: 'event.book_returned'
-            'Dinargab\LibraryBot\Domain\Event\Events\LendingOverdueEvent':
-                senders: ['async']
-                options:
-                    routing_key: 'event.lending.overdue'
-            'Dinargab\LibraryBot\Domain\Event\Events\SuggestionAddedEvent':
-                senders: [ 'async' ]
-                options:
-                    routing_key: 'event.suggestion.added'
-            'Dinargab\LibraryBot\Domain\Event\Events\SuggestionProcessedEvent':
-                senders: [ 'async' ]
-                options:
-                    routing_key: 'event.suggestion.processed'
+            'Dinargab\LibraryBot\Domain\Event\Events\BookAddedEvent': async
+            'Dinargab\LibraryBot\Domain\Event\Events\BookDeletedEvent': async
+            'Dinargab\LibraryBot\Domain\Event\Events\BookLentEvent': async
+            'Dinargab\LibraryBot\Domain\Event\Events\BookReturnedEvent': async
+            'Dinargab\LibraryBot\Domain\Event\Events\LendingOverdueEvent': async
+            'Dinargab\LibraryBot\Domain\Event\Events\LendingDeadlineNearEvent': async
+            'Dinargab\LibraryBot\Domain\Event\Events\SuggestionAddedEvent': async
+            'Dinargab\LibraryBot\Domain\Event\Events\SuggestionProcessedEvent': async

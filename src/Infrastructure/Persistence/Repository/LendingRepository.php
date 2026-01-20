@@ -57,6 +57,10 @@ class LendingRepository extends ServiceEntityRepository implements LendingReposi
         $now = new DateTimeImmutable();
 
         return $this->createQueryBuilder('lending')
+            ->select('user', 'bookCopy', 'book', 'lending')
+            ->leftJoin('lending.user', 'user')
+            ->leftJoin('lending.bookCopy', 'bookCopy')
+            ->leftJoin('bookCopy.book', 'book')
             ->andWhere('lending.dueDate < :now')
             ->andWhere('lending.returnedAt IS NULL')
             ->andWhere('lending.status != :returned')
@@ -72,7 +76,12 @@ class LendingRepository extends ServiceEntityRepository implements LendingReposi
         $now = new DateTimeImmutable();
         $futureDate = $now->modify("+{$days} days");
 
+        //Eager Loading
         return $this->createQueryBuilder('lending')
+            ->select('user', 'bookCopy', 'book', 'lending')
+            ->leftJoin('lending.user', 'user')
+            ->leftJoin('lending.bookCopy', 'bookCopy')
+            ->leftJoin('bookCopy.book', 'book')
             ->andWhere('lending.dueDate BETWEEN :now AND :future')
             ->andWhere('lending.returnedAt IS NULL')
             ->andWhere('lending.status = :status')
@@ -102,7 +111,11 @@ class LendingRepository extends ServiceEntityRepository implements LendingReposi
 
     public function findAll(int $page = 1, int $limit = 10): array
     {
+        //Eager Loading
         $queryBuilder = $this->createQueryBuilder('lending')
+            ->select('lending', 'bookCopy', 'book')
+            ->leftJoin('lending.bookCopy', 'bookCopy')
+            ->leftJoin('bookCopy.book', 'book')
             ->setMaxResults($limit)
             ->setFirstResult(($page - 1) * $limit);
         return $queryBuilder
@@ -113,7 +126,10 @@ class LendingRepository extends ServiceEntityRepository implements LendingReposi
     public function findAllByUser(int $userId, int $page = 1, int $limit = 10): array
     {
         return $this->createQueryBuilder('lending')
-            ->andWhere('lending.user = :userId')
+            ->select('lending', 'bookCopy', 'book')
+            ->leftJoin('lending.bookCopy', 'bookCopy')
+            ->leftJoin('bookCopy.book', 'book')
+            ->where('lending.user = :userId')
             ->setParameter('userId', $userId)
             ->setMaxResults($limit)
             ->setFirstResult(($page - 1) * $limit)
@@ -150,6 +166,6 @@ class LendingRepository extends ServiceEntityRepository implements LendingReposi
         if (is_null($userId)) {
             return $this->count([]);
         }
-        return $this->count(['lending.user' => $userId]);
+        return $this->count(['user' => $userId]);
     }
 }

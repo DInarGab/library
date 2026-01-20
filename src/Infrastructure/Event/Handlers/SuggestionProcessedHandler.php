@@ -23,8 +23,11 @@ class SuggestionProcessedHandler
         $message = "*Ваше предложение:*\n\n" .
             "*Автор:* $event->bookAuthor \n" .
             "*Название: * $event->bookTitle \n\n" .
-            "*Комментарий администратора:* $event->adminComment \n*";
+            "*Комментарий администратора:* $event->adminComment \n";
 
+        if ($event->srcUrl) {
+            $message .= 'Ссылка: ' . $event->srcUrl . "\n";
+        }
 
         if ($event->approved) {
             $message .= "*Принято, в скором времени книга появится в библиотеке, следите за обновлениями*";

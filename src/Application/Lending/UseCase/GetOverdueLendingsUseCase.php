@@ -24,9 +24,8 @@ class GetOverdueLendingsUseCase
 
             $this->eventDispatcher->dispatch(new LendingOverdueEvent(
                 lendingId: $lending->getId(),
-                bookId: $lending->getBookCopy()->getBook()->getId(),
+                bookAuthor: $lending->getBookCopy()->getBook()->getAuthor(),
                 bookTitle: $lending->getBookCopy()->getBook()->getTitle(),
-                userId: $lending->getUser()->getId(),
                 userTelegramId: (string) $lending->getUser()->getTelegramId(),
                 daysOverdue: abs($lending->getDaysUntilDue())
             ));

@@ -15,7 +15,7 @@ class ListSuggestionsCommand
 
     public const COMMAND_PREFIX = "list_suggestions";
 
-    public const PER_PAGE = 5;
+    public const PER_PAGE = 10;
 
     public function __construct(
         private ListSuggestionsUseCase $listSuggestionsUseCase,
@@ -42,7 +42,7 @@ class ListSuggestionsCommand
             currentPage: $currentPage,
             totalPages: $result->maxPage,
             itemCallback: fn(SuggestionDTO $suggestion, $key) => InlineKeyboardButton::make(
-                text: ($key + 1) . " " . $suggestion->title . " : " . $suggestion->author,
+                text: ($key + 1) . ") " . $suggestion->title . " : " . $suggestion->author,
                 callback_data: SuggestionDetailPageCommand::SUGGESTION_DETAIL_CALLBACK . ":$suggestion->id"
             ),
             paginationCallbackPrefix: self::COMMAND_PREFIX,
