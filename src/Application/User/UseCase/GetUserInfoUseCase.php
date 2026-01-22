@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Dinargab\LibraryBot\Application\User\UseCase;
@@ -12,19 +13,17 @@ class GetUserInfoUseCase
 {
     public function __construct(
         private UserRepository $userRepository,
-    )
-    {
-
+    ) {
     }
 
     public function __invoke(
         GetUserInfoRequestDTO $getUserInfoRequestDTO,
-    )
-    {
+    ) {
         $userInfo = $this->userRepository->findById($getUserInfoRequestDTO->userId);
         if ($userInfo === null) {
             throw new UserNotFoundException();
-        };
+        }
+
         return UserDTO::fromEntity($userInfo);
     }
 }

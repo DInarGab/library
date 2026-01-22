@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Dinargab\LibraryBot\Application\User\UseCase;
@@ -13,18 +14,15 @@ class GetUsersListUseCase
 {
     public function __construct(
         private UserRepository $userRepository,
-    )
-    {
-
+    ) {
     }
 
 
     public function __invoke(
         GetUsersListRequestDTO $getUsersListRequestDTO,
-    ): GetUsersListResponseDTO
-    {
-        $users = $this->userRepository->findAll($getUsersListRequestDTO->page, $getUsersListRequestDTO->limit);
-        $totalPages = (int) ceil($this->userRepository->getCount() / $getUsersListRequestDTO->limit);
+    ): GetUsersListResponseDTO {
+        $users      = $this->userRepository->findAll($getUsersListRequestDTO->page, $getUsersListRequestDTO->limit);
+        $totalPages = (int)ceil($this->userRepository->getCount() / $getUsersListRequestDTO->limit);
 
         $usersList = array_map(
             fn(User $user) => new UserDTO(

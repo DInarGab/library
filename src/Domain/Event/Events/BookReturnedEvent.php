@@ -1,9 +1,8 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Dinargab\LibraryBot\Domain\Event\Events;
-
-use Dinargab\LibraryBot\Application\Shared\DTO\LendingDTO;
 
 class BookReturnedEvent extends AbstractDomainEvent
 {

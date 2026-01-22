@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Dinargab\LibraryBot\Domain\Event\Events;
@@ -12,8 +13,7 @@ class SuggestionProcessedEvent extends AbstractDomainEvent
         public readonly ?string $srcUrl,
         public readonly bool $approved,
         public readonly string $adminComment
-    )
-    {
+    ) {
         parent::__construct();
     }
 }

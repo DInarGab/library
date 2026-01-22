@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Dinargab\LibraryBot\Infrastructure\Bot\Commands;
@@ -12,20 +13,19 @@ class StartCommand
 {
     public function __construct(
         private GetOrCreateUserUseCase $getOrCreateUserUseCase,
-    )
-    {
+    ) {
     }
 
     public function __invoke(Nutgram $bot)
     {
-        $user = $bot->user();
+        $user           = $bot->user();
         $registeredUser = ($this->getOrCreateUserUseCase)(
             new GetOrCreateUserRequestDTO(
-                (string) $user->id,
+                (string)$user->id,
                 $user->username,
                 $user->first_name,
                 $user->last_name,
-                (string) $user->id === trim(getenv('TELEGRAM_ADMIN_ID'))
+                (string)$user->id === trim(getenv('TELEGRAM_ADMIN_ID'))
             )
         );
 

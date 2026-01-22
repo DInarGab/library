@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Dinargab\LibraryBot\Infrastructure\Bot\Commands\Admin;
@@ -14,11 +15,10 @@ class ReturnBookCommand
 {
 
     public const RETURN_BOOK_PREFIX = 'return_book:';
+
     public function __construct(
         private ReturnBookUseCase $useCase,
-    )
-    {
-
+    ) {
     }
 
     public function __invoke(Nutgram $bot, string $lendingId)
@@ -26,12 +26,12 @@ class ReturnBookCommand
         $lendingInfo = ($this->useCase)(new ReturnBookRequestDTO((int)$lendingId));
 
 
-        $message = $bot->callbackQuery()?->message;
-        $text = "*Книга возвращена* \n"
-            . "Автор: $lendingInfo->bookAuthor \n"
-            . "Книга: $lendingInfo->bookTitle \n"
-            . "Книга выдана: $lendingInfo->issuedAt \n"
-            . "Возращена: $lendingInfo->dueDate \n";
+        $message  = $bot->callbackQuery()?->message;
+        $text     = "*Книга возвращена* \n"
+                    . "Автор: $lendingInfo->bookAuthor \n"
+                    . "Книга: $lendingInfo->bookTitle \n"
+                    . "Книга выдана: $lendingInfo->issuedAt \n"
+                    . "Возращена: $lendingInfo->dueDate \n";
         $keyboard = InlineKeyboardMarkup::make();
         $keyboard->addRow(
             InlineKeyboardButton::make("Назад", callback_data: ListLendingsCommand::COMMAND_PREFIX . ":1"),

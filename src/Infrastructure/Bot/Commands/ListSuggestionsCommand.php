@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Dinargab\LibraryBot\Infrastructure\Bot\Commands;
@@ -19,10 +20,8 @@ class ListSuggestionsCommand
 
     public function __construct(
         private ListSuggestionsUseCase $listSuggestionsUseCase,
-        private KeyboardService        $paginationKeyboardService,
-    )
-    {
-
+        private KeyboardService $paginationKeyboardService,
+    ) {
     }
 
 
@@ -30,10 +29,12 @@ class ListSuggestionsCommand
     {
         $currentPage = $page !== null ? (int)$page : 1;
 
-        $result = ($this->listSuggestionsUseCase)(new ListSuggestionRequestDTO(
-            page: $currentPage,
-            limit: self::PER_PAGE,
-        ));
+        $result = ($this->listSuggestionsUseCase)(
+            new ListSuggestionRequestDTO(
+                page: $currentPage,
+                limit: self::PER_PAGE,
+            )
+        );
 
         $text = $this->formatBooksList($result->suggestions, $currentPage);
 

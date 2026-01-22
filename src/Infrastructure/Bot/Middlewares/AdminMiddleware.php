@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Dinargab\LibraryBot\Infrastructure\Bot\Middlewares;
@@ -8,10 +9,8 @@ use SergiX44\Nutgram\Nutgram;
 
 class AdminMiddleware
 {
-    public function __construct(
-    )
+    public function __construct()
     {
-
     }
 
 
@@ -19,9 +18,10 @@ class AdminMiddleware
     {
         /** @var UserDTO|null $user */
         $user = $bot->get('user');
-        if ($user === null || !$user->isAdmin) {
+        if ($user === null || ! $user->isAdmin) {
             $bot->sendMessage('Access denied');
             $bot->endConversation();
+
             return;
         }
         $next($bot);

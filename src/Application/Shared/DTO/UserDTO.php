@@ -1,9 +1,9 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Dinargab\LibraryBot\Application\Shared\DTO;
 
-use Dinargab\LibraryBot\Domain\Book\Entity\Book;
 use Dinargab\LibraryBot\Domain\User\Entity\User;
 
 class UserDTO
@@ -14,9 +14,7 @@ class UserDTO
         public readonly ?string $username,
         public readonly string $telegramId,
         public readonly ?bool $isAdmin
-    )
-    {
-
+    ) {
     }
 
     public static function fromEntity(User $user): self

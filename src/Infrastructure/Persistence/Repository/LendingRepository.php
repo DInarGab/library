@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Dinargab\LibraryBot\Infrastructure\Persistence\Repository;
@@ -27,13 +28,13 @@ class LendingRepository extends ServiceEntityRepository implements LendingReposi
     public function findActiveByUser(User $user): array
     {
         return $this->createQueryBuilder('lending')
-            ->andWhere('lending.user = :user')
-            ->andWhere('lending.status IN (:activeStatuses)')
-            ->setParameter('user', $user)
-            ->setParameter('activeStatuses', ['active', 'overdue'])
-            ->orderBy('lending.dueDate', 'ASC')
-            ->getQuery()
-            ->getResult();
+                    ->andWhere('lending.user = :user')
+                    ->andWhere('lending.status IN (:activeStatuses)')
+                    ->setParameter('user', $user)
+                    ->setParameter('activeStatuses', ['active', 'overdue'])
+                    ->orderBy('lending.dueDate', 'ASC')
+                    ->getQuery()
+                    ->getResult();
     }
 
     public function findByUser(User $user): array
@@ -44,12 +45,12 @@ class LendingRepository extends ServiceEntityRepository implements LendingReposi
     public function findActiveByBookCopy(BookCopy $bookCopy): ?Lending
     {
         return $this->createQueryBuilder('lending')
-            ->andWhere('lending.bookCopy = :bookCopy')
-            ->andWhere('lending.status IN (:activeStatuses)')
-            ->setParameter('bookCopy', $bookCopy)
-            ->setParameter('activeStatuses', ['active', 'overdue'])
-            ->getQuery()
-            ->getOneOrNullResult();
+                    ->andWhere('lending.bookCopy = :bookCopy')
+                    ->andWhere('lending.status IN (:activeStatuses)')
+                    ->setParameter('bookCopy', $bookCopy)
+                    ->setParameter('activeStatuses', ['active', 'overdue'])
+                    ->getQuery()
+                    ->getOneOrNullResult();
     }
 
     public function findOverdue(): array
@@ -57,67 +58,68 @@ class LendingRepository extends ServiceEntityRepository implements LendingReposi
         $now = new DateTimeImmutable();
 
         return $this->createQueryBuilder('lending')
-            ->select('user', 'bookCopy', 'book', 'lending')
-            ->leftJoin('lending.user', 'user')
-            ->leftJoin('lending.bookCopy', 'bookCopy')
-            ->leftJoin('bookCopy.book', 'book')
-            ->andWhere('lending.dueDate < :now')
-            ->andWhere('lending.returnedAt IS NULL')
-            ->andWhere('lending.status != :returned')
-            ->setParameter('now', $now)
-            ->setParameter('returned', 'returned')
-            ->orderBy('lending.dueDate', 'ASC')
-            ->getQuery()
-            ->getResult();
+                    ->select('user', 'bookCopy', 'book', 'lending')
+                    ->leftJoin('lending.user', 'user')
+                    ->leftJoin('lending.bookCopy', 'bookCopy')
+                    ->leftJoin('bookCopy.book', 'book')
+                    ->andWhere('lending.dueDate < :now')
+                    ->andWhere('lending.returnedAt IS NULL')
+                    ->andWhere('lending.status != :returned')
+                    ->setParameter('now', $now)
+                    ->setParameter('returned', 'returned')
+                    ->orderBy('lending.dueDate', 'ASC')
+                    ->getQuery()
+                    ->getResult();
     }
 
     public function findDueSoon(int $days = 3): array
     {
-        $now = new DateTimeImmutable();
+        $now        = new DateTimeImmutable();
         $futureDate = $now->modify("+{$days} days");
 
         //Eager Loading
         return $this->createQueryBuilder('lending')
-            ->select('user', 'bookCopy', 'book', 'lending')
-            ->leftJoin('lending.user', 'user')
-            ->leftJoin('lending.bookCopy', 'bookCopy')
-            ->leftJoin('bookCopy.book', 'book')
-            ->andWhere('lending.dueDate BETWEEN :now AND :future')
-            ->andWhere('lending.returnedAt IS NULL')
-            ->andWhere('lending.status = :status')
-            ->setParameter('now', $now)
-            ->setParameter('future', $futureDate)
-            ->setParameter('status', 'borrowed')
-            ->orderBy('lending.dueDate', 'ASC')
-            ->getQuery()
-            ->getResult();
+                    ->select('user', 'bookCopy', 'book', 'lending')
+                    ->leftJoin('lending.user', 'user')
+                    ->leftJoin('lending.bookCopy', 'bookCopy')
+                    ->leftJoin('bookCopy.book', 'book')
+                    ->andWhere('lending.dueDate BETWEEN :now AND :future')
+                    ->andWhere('lending.returnedAt IS NULL')
+                    ->andWhere('lending.status = :status')
+                    ->setParameter('now', $now)
+                    ->setParameter('future', $futureDate)
+                    ->setParameter('status', 'borrowed')
+                    ->orderBy('lending.dueDate', 'ASC')
+                    ->getQuery()
+                    ->getResult();
     }
 
     public function findNeedingReminder(): array
     {
-        $now = new DateTimeImmutable();
+        $now      = new DateTimeImmutable();
         $tomorrow = $now->modify('+1 day');
 
         return $this->createQueryBuilder('lending')
-            ->andWhere('lending.dueDate BETWEEN :now AND :tomorrow')
-            ->andWhere('lending.returnedAt IS NULL')
-            ->andWhere('lending.status = :status')
-            ->setParameter('now', $now)
-            ->setParameter('tomorrow', $tomorrow)
-            ->setParameter('status', 'borrowed')
-            ->getQuery()
-            ->getResult();
+                    ->andWhere('lending.dueDate BETWEEN :now AND :tomorrow')
+                    ->andWhere('lending.returnedAt IS NULL')
+                    ->andWhere('lending.status = :status')
+                    ->setParameter('now', $now)
+                    ->setParameter('tomorrow', $tomorrow)
+                    ->setParameter('status', 'borrowed')
+                    ->getQuery()
+                    ->getResult();
     }
 
     public function findAll(int $page = 1, int $limit = 10): array
     {
         //Eager Loading
         $queryBuilder = $this->createQueryBuilder('lending')
-            ->select('lending', 'bookCopy', 'book')
-            ->leftJoin('lending.bookCopy', 'bookCopy')
-            ->leftJoin('bookCopy.book', 'book')
-            ->setMaxResults($limit)
-            ->setFirstResult(($page - 1) * $limit);
+                             ->select('lending', 'bookCopy', 'book')
+                             ->leftJoin('lending.bookCopy', 'bookCopy')
+                             ->leftJoin('bookCopy.book', 'book')
+                             ->setMaxResults($limit)
+                             ->setFirstResult(($page - 1) * $limit);
+
         return $queryBuilder
             ->getQuery()
             ->getResult();
@@ -126,24 +128,25 @@ class LendingRepository extends ServiceEntityRepository implements LendingReposi
     public function findAllByUser(int $userId, int $page = 1, int $limit = 10): array
     {
         return $this->createQueryBuilder('lending')
-            ->select('lending', 'bookCopy', 'book')
-            ->leftJoin('lending.bookCopy', 'bookCopy')
-            ->leftJoin('bookCopy.book', 'book')
-            ->where('lending.user = :userId')
-            ->setParameter('userId', $userId)
-            ->setMaxResults($limit)
-            ->setFirstResult(($page - 1) * $limit)
-            ->getQuery()
-            ->getResult();
+                    ->select('lending', 'bookCopy', 'book')
+                    ->leftJoin('lending.bookCopy', 'bookCopy')
+                    ->leftJoin('bookCopy.book', 'book')
+                    ->where('lending.user = :userId')
+                    ->setParameter('userId', $userId)
+                    ->setMaxResults($limit)
+                    ->setFirstResult(($page - 1) * $limit)
+                    ->getQuery()
+                    ->getResult();
     }
 
     public function findAllLended(int $page = 1, int $limit = 10): array
     {
         $queryBuilder = $this->createQueryBuilder('lending')
-            ->where('lending.status =:status')
-            ->setParameter('status', 'lent')
-            ->setMaxResults($limit)
-            ->setFirstResult(($page - 1) * $limit);
+                             ->where('lending.status =:status')
+                             ->setParameter('status', 'lent')
+                             ->setMaxResults($limit)
+                             ->setFirstResult(($page - 1) * $limit);
+
         return $queryBuilder
             ->getQuery()
             ->getResult();
@@ -166,6 +169,7 @@ class LendingRepository extends ServiceEntityRepository implements LendingReposi
         if (is_null($userId)) {
             return $this->count([]);
         }
+
         return $this->count(['user' => $userId]);
     }
 }

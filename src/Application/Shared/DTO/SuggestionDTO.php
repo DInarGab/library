@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Dinargab\LibraryBot\Application\Shared\DTO;
@@ -19,7 +20,8 @@ class SuggestionDTO
         public ?string $adminComment,
         public ?string $comment,
         public string $createdAt
-    ) {}
+    ) {
+    }
 
     public static function fromEntity(BookSuggestion $suggestion): self
     {

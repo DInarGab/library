@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Dinargab\LibraryBot\Infrastructure\Event\Handlers;
@@ -12,17 +13,15 @@ class LendingDeadlineNearHandler
 {
     public function __construct(
         private NotificationServiceInterface $notificationService
-    )
-    {
-
+    ) {
     }
 
     public function __invoke(LendingDeadlineNearEvent $event): void
     {
         $message = "*Приближается окончание срока выдачи книги:*\n\n" .
-            "Автор: $event->bookAuthor \n" .
-            "Название: $event->bookTitle \n" .
-            "Крайний срок: $event->dueDate";
+                   "Автор: $event->bookAuthor \n" .
+                   "Название: $event->bookTitle \n" .
+                   "Крайний срок: $event->dueDate";
 
         $this->notificationService->notifyUser($event->userTelegramId, $message);
     }

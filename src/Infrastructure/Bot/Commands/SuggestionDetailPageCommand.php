@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Dinargab\LibraryBot\Infrastructure\Bot\Commands;
@@ -21,11 +22,9 @@ class SuggestionDetailPageCommand
     private Nutgram $bot;
 
     public function __construct(
-        private KeyboardService      $keyboardService,
+        private KeyboardService $keyboardService,
         private GetSuggestionUseCase $getSuggestionUseCase,
-    )
-    {
-
+    ) {
     }
 
     public function __invoke(Nutgram $bot, string $suggestionId): void
@@ -35,10 +34,11 @@ class SuggestionDetailPageCommand
             $bookDetail = ($this->getSuggestionUseCase)(new GetSuggestionRequestDTO((int)$suggestionId));
         } catch (BookNotFoundException $exception) {
             $bot->sendMessage('Предложение не найдено');
+
             return;
         }
 
-        $text = $this->formatBookDetailText($bookDetail);
+        $text     = $this->formatBookDetailText($bookDetail);
         $keyboard = $this->createBookDetailKeyboard($bookDetail);
 
         $message = $bot->callbackQuery()?->message;
@@ -80,15 +80,20 @@ class SuggestionDetailPageCommand
     private function createBookDetailKeyboard(SuggestionDTO $suggestionDTO): InlineKeyboardMarkup
     {
         /** @var UserDTO $user */
-        $user = $this->bot->get('user');
+        $user             = $this->bot->get('user');
         $additionalButton = [];
 
         if ($user->isAdmin) {
             $additionalButton = [
-                InlineKeyboardButton::make('Принять предложение', callback_data: SuggestionProcessingCommand::PROCESS_SUGGESTION_CALLBACK . ":$suggestionDTO->id:" . BookSuggestionStatus::APPROVED->value),
-                InlineKeyboardButton::make('Отклонить предложение', callback_data: SuggestionProcessingCommand::PROCESS_SUGGESTION_CALLBACK . ":$suggestionDTO->id:" . BookSuggestionStatus::REJECTED->value),
+                InlineKeyboardButton::make(
+                    'Принять предложение',
+                    callback_data: SuggestionProcessingCommand::PROCESS_SUGGESTION_CALLBACK . ":$suggestionDTO->id:" . BookSuggestionStatus::APPROVED->value
+                ),
+                InlineKeyboardButton::make(
+                    'Отклонить предложение',
+                    callback_data: SuggestionProcessingCommand::PROCESS_SUGGESTION_CALLBACK . ":$suggestionDTO->id:" . BookSuggestionStatus::REJECTED->value
+                ),
             ];
-
         }
 
         return $this->keyboardService->createNavigationKeyboard(

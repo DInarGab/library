@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Dinargab\LibraryBot\Domain\Event\Events;
@@ -11,8 +12,7 @@ class SuggestionAddedEvent extends AbstractDomainEvent
         public readonly string $userName,
         public readonly ?string $comment,
         public readonly ?string $sourceUrl,
-    )
-    {
+    ) {
         parent::__construct();
     }
 }

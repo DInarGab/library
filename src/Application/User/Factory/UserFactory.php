@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Dinargab\LibraryBot\Application\User\Factory;
@@ -15,9 +16,8 @@ class UserFactory implements UserFactoryInterface
         ?string $username = null,
         ?string $firstName = null,
         ?string $lastName = null,
-        bool    $isAdmin = false
-    ): User
-    {
+        bool $isAdmin = false
+    ): User {
         return new User(
             telegramId: new TelegramId($telegramId),
             username: $username,

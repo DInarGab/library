@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Dinargab\LibraryBot\Infrastructure\Bot\Commands;
@@ -19,32 +20,31 @@ class ListLendingsCommand
     public const COMMAND_PREFIX = "list_lendings";
 
     public function __construct(
-        private ListLendingsUseCase        $getLendingsUseCase,
+        private ListLendingsUseCase $getLendingsUseCase,
         private KeyboardService $paginationKeyboardService
-    )
-    {
-
+    ) {
     }
 
     public function start()
     {
-
     }
+
     public function __invoke(Nutgram $bot, ?string $page = null): void
     {
-
         /** @var UserDTO $currentUser */
         $currentUser = $bot->get('user');
 
 
         $currentPage = $page !== null ? (int)$page : 1;
 
-        $result = ($this->getLendingsUseCase)(new ListLendingsRequestDTO(
-            page: $currentPage,
-            limit: self::PER_PAGE,
-            //Если админ возвращаем все lendingи, если пользователь то только пользователя
-            userId: $currentUser->isAdmin ? null : $currentUser->id
-        ));
+        $result = ($this->getLendingsUseCase)(
+            new ListLendingsRequestDTO(
+                page: $currentPage,
+                limit: self::PER_PAGE,
+                //Если админ возвращаем все lendingи, если пользователь то только пользователя
+                userId: $currentUser->isAdmin ? null : $currentUser->id
+            )
+        );
 
         $text = $this->formatLendingsList($result->lendings, $currentPage);
 

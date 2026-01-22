@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Dinargab\LibraryBot\Infrastructure\Bot\Commands;
@@ -35,10 +36,9 @@ class SuggestBookConversation extends BaseConversation
 
     public function __construct(
         private SuggestBookUseCase $suggestBookUseCase,
-        private ParseBookUseCase   $parseBookUseCase,
-        protected KeyboardService  $keyboardService,
-    )
-    {
+        private ParseBookUseCase $parseBookUseCase,
+        protected KeyboardService $keyboardService,
+    ) {
         parent::__construct($this->keyboardService);
     }
 
@@ -50,28 +50,28 @@ class SuggestBookConversation extends BaseConversation
     protected function resetState(): void
     {
         $this->suggestType = null;
-        $this->url = null;
-        $this->title = null;
-        $this->author = null;
-        $this->comment = null;
-        $this->isbn = null;
+        $this->url         = null;
+        $this->title       = null;
+        $this->author      = null;
+        $this->comment     = null;
+        $this->isbn        = null;
     }
 
     protected function getConfirmationData(): array
     {
         if ($this->suggestType === 'url') {
             return [
-                'Автор' => $this->author,
-                'Название' => $this->title,
-                'ISBN' => $this->isbn,
-                'Ссылка' => $this->url,
+                'Автор'       => $this->author,
+                'Название'    => $this->title,
+                'ISBN'        => $this->isbn,
+                'Ссылка'      => $this->url,
                 'Комментарий' => $this->comment,
             ];
         }
 
         return [
-            'Название' => $this->title,
-            'Автор' => $this->author,
+            'Название'    => $this->title,
+            'Автор'       => $this->author,
             'Комментарий' => $this->comment,
         ];
     }
@@ -84,9 +84,9 @@ class SuggestBookConversation extends BaseConversation
             text: "📚 *Предложить книгу*\n\nВыберите способ добавления:",
             parse_mode: 'Markdown',
             reply_markup: InlineKeyboardMarkup::make()
-                ->addRow($this->makeButton("По ссылке", self::TYPE_URL_CALLBACK))
-                ->addRow($this->makeButton("Ввести вручную", self::TYPE_MANUAL_CALLBACK))
-                ->addRow(InlineKeyboardButton::make("Отмена", callback_data: "close"))
+                                              ->addRow($this->makeButton("По ссылке", self::TYPE_URL_CALLBACK))
+                                              ->addRow($this->makeButton("Ввести вручную", self::TYPE_MANUAL_CALLBACK))
+                                              ->addRow(InlineKeyboardButton::make("Отмена", callback_data: "close"))
         );
 
         $this->next('handleTypeSelection');
@@ -98,6 +98,7 @@ class SuggestBookConversation extends BaseConversation
 
         if ($callbackQuery === null) {
             $bot->sendMessage("Пожалуйста, нажмите одну из кнопок выше.");
+
             return;
         }
 
@@ -109,10 +110,9 @@ class SuggestBookConversation extends BaseConversation
             $this->editOrSendMessage(
                 bot: $bot,
                 text: "*Предложение книги по ссылке*\n\n" .
-                "Отправьте ссылку на книгу:",
+                      "Отправьте ссылку на книгу:",
             );
             $this->next('askUrl');
-
         } elseif ($this->isCallbackAction($data, self::TYPE_MANUAL_CALLBACK)) {
             $this->suggestType = 'manual';
             $this->editOrSendMessage(
@@ -120,7 +120,6 @@ class SuggestBookConversation extends BaseConversation
                 text: "*Предложение книги вручную*\n\nВведите название книги:",
             );
             $this->next('askTitle');
-
         } elseif ($data === 'close') {
             $this->end();
         }
@@ -132,11 +131,13 @@ class SuggestBookConversation extends BaseConversation
 
         if (empty($text)) {
             $bot->sendMessage("Пожалуйста, отправьте ссылку на книгу:");
+
             return;
         }
 
-        if (!filter_var($text, FILTER_VALIDATE_URL)) {
+        if ( ! filter_var($text, FILTER_VALIDATE_URL)) {
             $bot->sendMessage("Это не похоже на ссылку. Пожалуйста, отправьте корректную ссылку:");
+
             return;
         }
 
@@ -148,12 +149,10 @@ class SuggestBookConversation extends BaseConversation
             $this->next('askTitle');
         } else {
             $this->author = $parsedBookContent->author;
-            $this->title = $parsedBookContent->title;
-            $this->isbn = $parsedBookContent->isbn;
+            $this->title  = $parsedBookContent->title;
+            $this->isbn   = $parsedBookContent->isbn;
             $this->askForComment($bot);
         }
-
-
     }
 
     public function askTitle(Nutgram $bot): void
@@ -162,6 +161,7 @@ class SuggestBookConversation extends BaseConversation
 
         if (empty($text)) {
             $bot->sendMessage("Пожалуйста, введите название книги:");
+
             return;
         }
 
@@ -176,6 +176,7 @@ class SuggestBookConversation extends BaseConversation
 
         if (empty($text)) {
             $bot->sendMessage("Пожалуйста, введите автора книги:");
+
             return;
         }
 
@@ -202,15 +203,17 @@ class SuggestBookConversation extends BaseConversation
             $bot->answerCallbackQuery();
             $this->comment = null;
             $this->showConfirmation($bot);
+
             return;
         }
 
         // Текстовый комментарий
         $text = $bot->message()?->text;
 
-        if (!empty($text)) {
+        if ( ! empty($text)) {
             $this->comment = trim($text);
             $this->showConfirmation($bot);
+
             return;
         }
 
@@ -219,11 +222,10 @@ class SuggestBookConversation extends BaseConversation
 
     protected function save(Nutgram $bot): void
     {
-
         try {
             /** @var UserDTO $user */
             $user = $this->bot->get('user');
-            $dto = new SuggestBookRequestDTO(
+            $dto  = new SuggestBookRequestDTO(
                 userId: $user->id,
                 url: $this->url,
                 isbn: $this->isbn,

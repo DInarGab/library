@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Dinargab\LibraryBot\Infrastructure\Event;
@@ -12,8 +13,7 @@ class EventDispatcher implements EventDispatcherInterface
 {
     private SplObjectStorage $observers;
 
-    public function __construct(
-    )
+    public function __construct()
     {
         $this->observers = new SplObjectStorage();
     }
@@ -30,7 +30,6 @@ class EventDispatcher implements EventDispatcherInterface
 
     public function dispatch(DomainEventInterface $event): void
     {
-
         foreach ($this->observers as $observer) {
             if ($this->observerSupportsEvent($observer, $event)) {
                 $observer->handleEvent($event);
@@ -40,9 +39,8 @@ class EventDispatcher implements EventDispatcherInterface
 
     private function observerSupportsEvent(
         EventObserverInterface $observer,
-        DomainEventInterface   $event
-    ): bool
-    {
+        DomainEventInterface $event
+    ): bool {
         $subscribedEvents = $observer->getSubscribedEvents();
 
         if (empty($subscribedEvents)) {

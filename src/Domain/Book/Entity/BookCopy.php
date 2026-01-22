@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Dinargab\LibraryBot\Domain\Book\Entity;
@@ -30,10 +31,10 @@ class BookCopy
         Book $book,
         string $inventoryNumber,
     ) {
-        $this->book = $book;
+        $this->book            = $book;
         $this->inventoryNumber = $inventoryNumber;
-        $this->status = BookStatus::AVAILABLE;
-        $this->createdAt = new DateTimeImmutable();
+        $this->status          = BookStatus::AVAILABLE;
+        $this->createdAt       = new DateTimeImmutable();
     }
 
     public function getId(): int

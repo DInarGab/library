@@ -1,9 +1,9 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Dinargab\LibraryBot\Infrastructure\Bot\Service;
 
-use SergiX44\Nutgram\Nutgram;
 use SergiX44\Nutgram\Telegram\Types\Keyboard\InlineKeyboardButton;
 use SergiX44\Nutgram\Telegram\Types\Keyboard\InlineKeyboardMarkup;
 
@@ -19,6 +19,7 @@ class KeyboardService
      * @param callable $itemCallback Функция для создания кнопки элемента
      * @param string $paginationCallbackPrefix Префикс для пагинации
      * @param array $extraButtons Дополнительные кнопки
+     *
      * @return InlineKeyboardMarkup
      */
     public function createListWithPagination(
@@ -37,7 +38,7 @@ class KeyboardService
             $keyboard->addRow($button);
         }
 
-        if (!empty($extraButtons)) {
+        if ( ! empty($extraButtons)) {
             $chunks = array_chunk($extraButtons, 2);
             foreach ($chunks as $chunk) {
                 $keyboard->addRow(...$chunk);
@@ -60,6 +61,7 @@ class KeyboardService
      * @param int $currentPage
      * @param int $totalPages
      * @param string $callbackPrefix
+     *
      * @return array
      */
     public function createPaginationRow(
@@ -97,6 +99,7 @@ class KeyboardService
      * @param string|null $backCallback Callback для кнопки "Назад"
      * @param string|null $closeCallback Callback для кнопки "Закрыть"
      * @param array $additionalButtons Дополнительные кнопки
+     *
      * @return InlineKeyboardMarkup
      */
     public function createNavigationKeyboard(
@@ -108,7 +111,7 @@ class KeyboardService
 
         $buttons = [];
 
-        if (!empty($additionalButtons)) {
+        if ( ! empty($additionalButtons)) {
             foreach ($additionalButtons as $additionalButton) {
                 $buttons[] = $additionalButton;
             }
@@ -123,7 +126,7 @@ class KeyboardService
         }
 
 
-        if (!empty($buttons)) {
+        if ( ! empty($buttons)) {
             $buttonsChunked = array_chunk($buttons, 2);
             foreach ($buttonsChunked as $chunk) {
                 $keyboard->addRow(...$chunk);
@@ -139,16 +142,16 @@ class KeyboardService
     public function buildConfirmationKeyboard(string $prefix): InlineKeyboardMarkup
     {
         return InlineKeyboardMarkup::make()
-            ->addRow(
-                InlineKeyboardButton::make(
-                    "Да, подтвердить",
-                    callback_data: "{$prefix}_confirm:yes"
-                ),
-                InlineKeyboardButton::make(
-                    "Отмена",
-                    callback_data: "close"
-                )
-            );
+                                   ->addRow(
+                                       InlineKeyboardButton::make(
+                                           "Да, подтвердить",
+                                           callback_data: "{$prefix}_confirm:yes"
+                                       ),
+                                       InlineKeyboardButton::make(
+                                           "Отмена",
+                                           callback_data: "close"
+                                       )
+                                   );
     }
 
 

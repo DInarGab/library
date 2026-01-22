@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Dinargab\LibraryBot\Infrastructure\Bot\Commands\Admin;
@@ -29,18 +30,16 @@ class SuggestionProcessingCommand extends BaseConversation
         private SuggestionProcessingUseCase $useCase,
         private GetSuggestionUseCase $getSuggestionUseCase,
         protected KeyboardService $keyboardService,
-    )
-    {
+    ) {
         parent::__construct($this->keyboardService);
     }
 
     public function start(Nutgram $bot, string $suggestionId, string $status)
     {
         $this->suggestionId = (int)$suggestionId;
-        $this->status = BookSuggestionStatus::from($status);
+        $this->status       = BookSuggestionStatus::from($status);
         try {
             ($this->getSuggestionUseCase)(new GetSuggestionRequestDTO($this->suggestionId));
-
         } catch (BookSuggestionNotFoundException $exception) {
             $this->editOrSendMessage($bot, 'Предложение не найдено');
             $this->end();
@@ -61,7 +60,7 @@ class SuggestionProcessingCommand extends BaseConversation
         }
 
         $text = $bot->message()?->text;
-        if (!empty($text)) {
+        if ( ! empty($text)) {
             $this->adminComment = trim($text);
         }
         $this->save($bot);
@@ -100,6 +99,7 @@ class SuggestionProcessingCommand extends BaseConversation
             BookSuggestionStatus::REJECTED => $responseArray["*Результат*"] = "Предложение было отклонено, уведомление отправлено пользователю",
             default => throw new Exception('Statuses can only be set to Approved or Rejected state.'),
         };
+
         return $responseArray;
     }
 

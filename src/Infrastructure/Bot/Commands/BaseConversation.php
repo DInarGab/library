@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Dinargab\LibraryBot\Infrastructure\Bot\Commands;
@@ -9,7 +10,6 @@ use SergiX44\Nutgram\Conversations\Conversation;
 use SergiX44\Nutgram\Nutgram;
 use SergiX44\Nutgram\Telegram\Types\Keyboard\InlineKeyboardButton;
 use SergiX44\Nutgram\Telegram\Types\Keyboard\InlineKeyboardMarkup;
-use Symfony\Contracts\Service\Attribute\Required;
 
 abstract class BaseConversation extends Conversation
 {
@@ -17,9 +17,7 @@ abstract class BaseConversation extends Conversation
 
     public function __construct(
         protected KeyboardService $keyboardService,
-    )
-    {
-
+    ) {
     }
 
     /**
@@ -48,7 +46,7 @@ abstract class BaseConversation extends Conversation
      */
     protected function showConfirmation(Nutgram $bot): void
     {
-        $data = $this->getConfirmationData();
+        $data    = $this->getConfirmationData();
         $message = $this->formatConfirmationMessage($data);
         $this->editOrSendMessage(
             bot: $bot,
@@ -87,6 +85,7 @@ abstract class BaseConversation extends Conversation
 
         if ($callbackQuery === null) {
             $bot->sendMessage("Пожалуйста, нажмите одну из кнопок выше.");
+
             return;
         }
 
@@ -149,7 +148,7 @@ abstract class BaseConversation extends Conversation
         $bot->sendMessage(
             text: $prompt,
             reply_markup: InlineKeyboardMarkup::make()
-                ->addRow($this->makeButton("Пропустить", $skipAction))
+                                              ->addRow($this->makeButton("Пропустить", $skipAction))
         );
     }
 
@@ -177,12 +176,11 @@ abstract class BaseConversation extends Conversation
     }
 
     protected function editOrSendMessage(
-        Nutgram              $bot,
-        string               $text,
+        Nutgram $bot,
+        string $text,
         ?InlineKeyboardMarkup $keyboard = null,
-        string               $parseMode = 'Markdown'
-    ): void
-    {
+        string $parseMode = 'Markdown'
+    ): void {
         $message = $bot->callbackQuery()?->message;
 
         if ($message) {

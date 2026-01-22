@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Dinargab\LibraryBot\Infrastructure\Bot\Commands\Admin;
@@ -35,19 +36,19 @@ class AddBookConversation extends BaseConversation
 
     protected function resetState(): void
     {
-        $this->author = '';
-        $this->title = '';
+        $this->author      = '';
+        $this->title       = '';
         $this->description = '';
-        $this->isbn = '';
+        $this->isbn        = '';
     }
 
     protected function getConfirmationData(): array
     {
         return [
             'Название' => $this->title,
-            'Автор' => $this->author,
+            'Автор'    => $this->author,
             'Описание' => $this->description,
-            'ISBN' => $this->isbn,
+            'ISBN'     => $this->isbn,
         ];
     }
 
@@ -65,6 +66,7 @@ class AddBookConversation extends BaseConversation
 
         if (empty($text)) {
             $bot->sendMessage("Пожалуйста, введите автора книги:");
+
             return;
         }
 
@@ -79,6 +81,7 @@ class AddBookConversation extends BaseConversation
 
         if (empty($text)) {
             $bot->sendMessage("Пожалуйста, введите название книги:");
+
             return;
         }
 
@@ -93,6 +96,7 @@ class AddBookConversation extends BaseConversation
 
         if (empty($text)) {
             $bot->sendMessage("Пожалуйста, введите описание книги:");
+
             return;
         }
 
@@ -107,6 +111,7 @@ class AddBookConversation extends BaseConversation
 
         if (empty($text)) {
             $bot->sendMessage("Пожалуйста, введите ISBN:");
+
             return;
         }
 
@@ -123,13 +128,15 @@ class AddBookConversation extends BaseConversation
     protected function save(Nutgram $bot): void
     {
         try {
-            ($this->addBookUseCase)(new AddBookRequestDTO(
-                $this->title,
-                $this->author,
-                1,
-                $this->isbn,
-                $this->description,
-            ));
+            ($this->addBookUseCase)(
+                new AddBookRequestDTO(
+                    $this->title,
+                    $this->author,
+                    1,
+                    $this->isbn,
+                    $this->description,
+                )
+            );
             $this->deleteCallbackMessage($bot);
             $this->onSaveSuccess($bot, "*Книга успешно добавлена!*");
         } catch (Exception $e) {

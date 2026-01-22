@@ -1,9 +1,12 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Dinargab\LibraryBot\Domain\Exception;
 
-class BookSuggestionNotFoundException extends \DomainException
+use DomainException;
+
+class BookSuggestionNotFoundException extends DomainException
 {
 
 }

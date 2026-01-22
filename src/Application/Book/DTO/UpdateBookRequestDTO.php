@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Dinargab\LibraryBot\Application\Book\DTO;
@@ -12,8 +13,6 @@ class UpdateBookRequestDTO
         public readonly ?string $isbn = null,
         public readonly ?string $description = null,
         public readonly ?string $coverUrl = null
-    )
-    {
-
+    ) {
     }
 }

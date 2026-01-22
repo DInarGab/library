@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Dinargab\LibraryBot\Infrastructure\Bot\Commands;
@@ -19,12 +20,11 @@ class BookDetailPageCommand
 
     public const COMMAND_PREFIX = 'book_detail';
     private Nutgram $bot;
-    public function __construct(
-        private GetBookUseCase  $useCase,
-        private KeyboardService $paginationKeyboardService,
-    )
-    {
 
+    public function __construct(
+        private GetBookUseCase $useCase,
+        private KeyboardService $paginationKeyboardService,
+    ) {
     }
 
 
@@ -35,10 +35,11 @@ class BookDetailPageCommand
             $bookDetail = ($this->useCase)(new GetBookRequestDTO((int)$bookId));
         } catch (BookNotFoundException $exception) {
             $bot->sendMessage('Книга не найдена');
+
             return;
         }
 
-        $text = $this->formatBookDetailText($bookDetail);
+        $text     = $this->formatBookDetailText($bookDetail);
         $keyboard = $this->createBookDetailKeyboard($bookDetail);
 
         $message = $bot->callbackQuery()?->message;
@@ -55,15 +56,17 @@ class BookDetailPageCommand
     private function createBookDetailKeyboard(BookDTO $bookDetail): InlineKeyboardMarkup
     {
         /** @var UserDTO $user */
-        $user = $this->bot->get('user');
+        $user             = $this->bot->get('user');
         $additionalButton = [];
 
         if ($user->isAdmin) {
             $additionalButton = [
                 InlineKeyboardButton::make('Выдать книгу', callback_data: "lend_book:$bookDetail->id"),
-                InlineKeyboardButton::make('Удалить книгу', callback_data: DeleteBookCommand::COMMAND_PREFIX . ":$bookDetail->id"),
+                InlineKeyboardButton::make(
+                    'Удалить книгу',
+                    callback_data: DeleteBookCommand::COMMAND_PREFIX . ":$bookDetail->id"
+                ),
             ];
-
         }
 
         return $this->paginationKeyboardService->createNavigationKeyboard(

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Dinargab\LibraryBot\Application\Book\UseCase;
@@ -19,7 +20,8 @@ class AddBookUseCase
         private BookCopyRepositoryInterface $bookCopyRepository,
         private BookFactoryInterface $bookFactory,
         private EventDispatcherInterface $eventDispatcher,
-    ) {}
+    ) {
+    }
 
     public function __invoke(
         AddBookRequestDTO $addBookRequestDTO,
@@ -36,17 +38,20 @@ class AddBookUseCase
 
         for ($i = 0; $i < $addBookRequestDTO->copies; $i++) {
             $inventoryNumber = $this->bookCopyRepository->generateInventoryNumber();
-            $bookCopy = new BookCopy($book, $inventoryNumber);
+            $bookCopy        = new BookCopy($book, $inventoryNumber);
             $book->addCopy($bookCopy);
             $this->bookCopyRepository->save($bookCopy);
         }
-        $this->eventDispatcher->dispatch(new BookAddedEvent(
-            $book->getId(),
-            $book->getTitle(),
-            $book->getAuthor(),
-            $book->getIsbn()->getValue(),
-            1,
-        ));
+        $this->eventDispatcher->dispatch(
+            new BookAddedEvent(
+                $book->getId(),
+                $book->getTitle(),
+                $book->getAuthor(),
+                $book->getIsbn()->getValue(),
+                1,
+            )
+        );
+
         return BookDTO::fromEntity($book);
     }
 }

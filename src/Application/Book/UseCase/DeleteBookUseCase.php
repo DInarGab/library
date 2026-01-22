@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Dinargab\LibraryBot\Application\Book\UseCase;
@@ -14,18 +15,16 @@ use DomainException;
 class DeleteBookUseCase
 {
     public function __construct(
-        private BookRepositoryInterface    $bookRepository,
+        private BookRepositoryInterface $bookRepository,
         private LendingRepositoryInterface $lendingRepository,
-        private EventDispatcherInterface   $eventDispatcher
-    )
-    {
+        private EventDispatcherInterface $eventDispatcher
+    ) {
     }
 
 
     public function __invoke(
         DeleteBookRequestDTO $deleteBookRequestDTO
-    ): void
-    {
+    ): void {
         $book = $this->bookRepository->findById($deleteBookRequestDTO->bookId);
 
         if ($book === null) {
@@ -41,16 +40,18 @@ class DeleteBookUseCase
             }
         }
 
-        $bookTitle = $book->getTitle();
+        $bookTitle  = $book->getTitle();
         $bookAuthor = $book->getAuthor();
-        $bookId = $book->getId();
+        $bookId     = $book->getId();
 
         $this->bookRepository->delete($book);
 
-        $this->eventDispatcher->dispatch(new BookDeletedEvent(
-            bookId: $bookId,
-            title: $bookTitle,
-            author: $bookAuthor
-        ));
+        $this->eventDispatcher->dispatch(
+            new BookDeletedEvent(
+                bookId: $bookId,
+                title: $bookTitle,
+                author: $bookAuthor
+            )
+        );
     }
 }

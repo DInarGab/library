@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Dinargab\LibraryBot\Infrastructure\Bot\Commands\Admin;
@@ -17,9 +18,7 @@ class DeleteBookCommand
 
     public function __construct(
         private DeleteBookUseCase $deleteBookUseCase
-    )
-    {
-
+    ) {
     }
 
     public function __invoke(Nutgram $bot, $bookId)

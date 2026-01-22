@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 
@@ -40,25 +41,24 @@ class BookSuggestion
     private ?string $comment;
 
     public function __construct(
-        User    $user,
+        User $user,
         ?string $title = null,
         ?string $author = null,
         ?string $sourceUrl = null,
         ?string $comment = null,
         ?string $isbn = null,
-        ?array  $parsedData = null
-    )
-    {
-        $this->parsedData = $parsedData;
-        $this->sourceUrl = $sourceUrl;
-        $this->author = $author;
-        $this->title = $title;
-        $this->user = $user;
-        $this->isbn = $isbn ? new ISBN($isbn) : null;
-        $this->comment = $comment;
-        $this->status = BookSuggestionStatus::PENDING;
+        ?array $parsedData = null
+    ) {
+        $this->parsedData   = $parsedData;
+        $this->sourceUrl    = $sourceUrl;
+        $this->author       = $author;
+        $this->title        = $title;
+        $this->user         = $user;
+        $this->isbn         = $isbn ? new ISBN($isbn) : null;
+        $this->comment      = $comment;
+        $this->status       = BookSuggestionStatus::PENDING;
         $this->adminComment = null;
-        $this->createdAt = new DateTimeImmutable();
+        $this->createdAt    = new DateTimeImmutable();
     }
 
     public function getId(): int
@@ -143,12 +143,14 @@ class BookSuggestion
     public function setStatus(BookSuggestionStatus $status): BookSuggestion
     {
         $this->status = $status;
+
         return $this;
     }
 
     public function setAdminComment(?string $adminComment): BookSuggestion
     {
         $this->adminComment = $adminComment;
+
         return $this;
     }
 }

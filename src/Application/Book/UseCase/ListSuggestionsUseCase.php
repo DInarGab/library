@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Dinargab\LibraryBot\Application\Book\UseCase;
@@ -14,23 +15,27 @@ class ListSuggestionsUseCase
 {
     public function __construct(
         private BookSuggestionRepositoryInterface $bookSuggestionRepository,
-    )
-    {
+    ) {
     }
 
     public function __invoke(
         ListSuggestionRequestDTO $bookSuggestionRequestDTO,
-    ): ListSuggestionResponseDTO
-    {
-
+    ): ListSuggestionResponseDTO {
         if ($bookSuggestionRequestDTO->userId) {
-            $suggestions = $this->bookSuggestionRepository->findByUser($bookSuggestionRequestDTO->userId, $bookSuggestionRequestDTO->page, $bookSuggestionRequestDTO->limit);
-            $totalItems = $this->bookSuggestionRepository->count(['userId' => $bookSuggestionRequestDTO->userId]);
+            $suggestions = $this->bookSuggestionRepository->findByUser(
+                $bookSuggestionRequestDTO->userId,
+                $bookSuggestionRequestDTO->page,
+                $bookSuggestionRequestDTO->limit
+            );
+            $totalItems  = $this->bookSuggestionRepository->count(['userId' => $bookSuggestionRequestDTO->userId]);
         } else {
-            $suggestions = $this->bookSuggestionRepository->findPending($bookSuggestionRequestDTO->page, $bookSuggestionRequestDTO->limit);
-            $totalItems = $this->bookSuggestionRepository->count(["status" => BookSuggestionStatus::PENDING]);
+            $suggestions = $this->bookSuggestionRepository->findPending(
+                $bookSuggestionRequestDTO->page,
+                $bookSuggestionRequestDTO->limit
+            );
+            $totalItems  = $this->bookSuggestionRepository->count(["status" => BookSuggestionStatus::PENDING]);
         }
-        $maxPage = (int) ceil($totalItems / $bookSuggestionRequestDTO->limit);
+        $maxPage = (int)ceil($totalItems / $bookSuggestionRequestDTO->limit);
 
         return new ListSuggestionResponseDTO(
             array_map(fn(BookSuggestion $suggestion) => SuggestionDTO::fromEntity($suggestion), $suggestions),

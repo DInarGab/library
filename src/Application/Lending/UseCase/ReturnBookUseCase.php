@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Dinargab\LibraryBot\Application\Lending\UseCase;
@@ -15,15 +16,13 @@ class ReturnBookUseCase
 {
     public function __construct(
         private LendingRepositoryInterface $lendingRepository,
-        private EventDispatcherInterface   $eventDispatcher,
-    )
-    {
+        private EventDispatcherInterface $eventDispatcher,
+    ) {
     }
 
     public function __invoke(
         ReturnBookRequestDTO $returnBookRequestDTO,
-    ): LendingDTO
-    {
+    ): LendingDTO {
         $lending = $this->lendingRepository->findById($returnBookRequestDTO->lendingId);
         if ($lending === null) {
             throw new DomainException("Lending not found");
@@ -37,14 +36,17 @@ class ReturnBookUseCase
 
         $this->lendingRepository->save($lending);
         $lendingDTO = LendingDTO::fromEntity($lending);
-        $this->eventDispatcher->dispatch(new BookReturnedEvent(
-            $lending->getId(),
-            $lending->getBookCopy()->getBook()->getAuthor(),
-            $lending->getBookCopy()->getBook()->getTitle(),
-            $lending->getUser()->getDisplayName(),
-            $lending->getUser()->getTelegramId()->getValue(),
-            $lending->getDueDate() < new DateTime()
-        ));
+        $this->eventDispatcher->dispatch(
+            new BookReturnedEvent(
+                $lending->getId(),
+                $lending->getBookCopy()->getBook()->getAuthor(),
+                $lending->getBookCopy()->getBook()->getTitle(),
+                $lending->getUser()->getDisplayName(),
+                $lending->getUser()->getTelegramId()->getValue(),
+                $lending->getDueDate() < new DateTime()
+            )
+        );
+
         return $lendingDTO;
     }
 }

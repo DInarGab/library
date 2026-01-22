@@ -1,8 +1,10 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Dinargab\LibraryBot\Application\Lending\Factory;
 
+use DateTimeImmutable;
 use Dinargab\LibraryBot\Domain\Book\Entity\BookCopy;
 use Dinargab\LibraryBot\Domain\Lending\Entity\Lending;
 use Dinargab\LibraryBot\Domain\Lending\Factory\LendingFactoryInterface;
@@ -16,7 +18,7 @@ class LendingFactory implements LendingFactoryInterface
         if ($daysToReturn === null) {
             $daysToReturn = 7;
         }
-        $dueDate = (new \DateTimeImmutable('now'))->modify("+$daysToReturn days");
+        $dueDate = (new DateTimeImmutable('now'))->modify("+$daysToReturn days");
 
         return new Lending($bookCopy, $user, $dueDate);
     }

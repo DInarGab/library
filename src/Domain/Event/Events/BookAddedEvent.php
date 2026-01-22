@@ -1,9 +1,8 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Dinargab\LibraryBot\Domain\Event\Events;
-
-use Dinargab\LibraryBot\Domain\Book\Entity\Book;
 
 class BookAddedEvent extends AbstractDomainEvent
 {

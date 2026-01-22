@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Dinargab\LibraryBot\Domain\User\Entity;
@@ -40,11 +41,11 @@ class User
         UserRole $role = UserRole::USER
     ) {
         $this->telegramId = $telegramId;
-        $this->username = $username;
-        $this->firstName = $firstName;
-        $this->lastName = $lastName;
-        $this->role = $role;
-        $this->createdAt = new DateTimeImmutable();
+        $this->username   = $username;
+        $this->firstName  = $firstName;
+        $this->lastName   = $lastName;
+        $this->role       = $role;
+        $this->createdAt  = new DateTimeImmutable();
     }
 
     public function getId(): int
@@ -89,6 +90,7 @@ class User
             if ($this->lastName) {
                 $name .= ' ' . $this->lastName;
             }
+
             return $name;
         }
 

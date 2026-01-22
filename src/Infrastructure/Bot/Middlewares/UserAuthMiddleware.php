@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Dinargab\LibraryBot\Infrastructure\Bot\Middlewares;
@@ -11,17 +12,15 @@ class UserAuthMiddleware
 {
     public function __construct(
         private GetOrCreateUserUseCase $getOrCreateUserUseCase
-    )
-    {
-
+    ) {
     }
 
     public function __invoke(Nutgram $bot, $next)
     {
-        $user = $bot->user();
+        $user    = $bot->user();
         $botUser = ($this->getOrCreateUserUseCase)(
             new GetOrCreateUserRequestDTO(
-                (string) $user->id,
+                (string)$user->id,
                 $user->username,
                 $user->first_name,
                 $user->last_name,

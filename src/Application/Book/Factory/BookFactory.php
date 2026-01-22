@@ -1,11 +1,11 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Dinargab\LibraryBot\Application\Book\Factory;
 
 use Dinargab\LibraryBot\Domain\Book\Entity\Book;
 use Dinargab\LibraryBot\Domain\Book\Factory\BookFactoryInterface;
-use Dinargab\LibraryBot\Domain\Book\ValueObject\ISBN;
 
 class BookFactory implements BookFactoryInterface
 {
@@ -17,7 +17,6 @@ class BookFactory implements BookFactoryInterface
         ?string $description = null,
         ?string $coverUrl = null
     ): Book {
-
         return new Book(
             title: $title,
             author: $author,

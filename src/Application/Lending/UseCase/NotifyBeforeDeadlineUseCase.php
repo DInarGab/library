@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Dinargab\LibraryBot\Application\Lending\UseCase;
@@ -17,10 +18,8 @@ class NotifyBeforeDeadlineUseCase
 
     public function __construct(
         private LendingRepositoryInterface $lendingRepository,
-        private EventDispatcherInterface   $eventDispatcher
-    )
-    {
-
+        private EventDispatcherInterface $eventDispatcher
+    ) {
     }
 
 
@@ -34,14 +33,17 @@ class NotifyBeforeDeadlineUseCase
 
         $lendings = array_map(fn(Lending $lending) => LendingDTO::fromEntity($lending), $dueSoonLendings);
         foreach ($lendings as $dueSoonLending) {
-            $this->eventDispatcher->dispatch(new LendingDeadlineNearEvent(
-                $dueSoonLending->bookAuthor,
-                $dueSoonLending->bookTitle,
-                $dueSoonLending->userTelegramId,
-                $dueSoonLending->daysUntilDue,
-                $dueSoonLending->dueDate,
-            ));
+            $this->eventDispatcher->dispatch(
+                new LendingDeadlineNearEvent(
+                    $dueSoonLending->bookAuthor,
+                    $dueSoonLending->bookTitle,
+                    $dueSoonLending->userTelegramId,
+                    $dueSoonLending->daysUntilDue,
+                    $dueSoonLending->dueDate,
+                )
+            );
         }
+
         return new NotifyBeforeDeadlineResponseDTO($lendings);
     }
 }

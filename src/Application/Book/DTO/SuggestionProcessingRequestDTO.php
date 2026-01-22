@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Dinargab\LibraryBot\Application\Book\DTO;
@@ -11,8 +12,6 @@ class SuggestionProcessingRequestDTO
         public readonly int $suggestionId,
         public readonly ?string $adminComment,
         public readonly BookSuggestionStatus $suggestionStatus,
-    )
-    {
-
+    ) {
     }
 }

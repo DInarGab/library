@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Dinargab\LibraryBot\Infrastructure\Bot\Commands;
@@ -17,19 +18,20 @@ class ListBooksCommand
 
     public function __construct(
         private ListAvailableBooksUseCase $listAvailableBooksUseCase,
-        private KeyboardService           $paginationKeyboardService
-    )
-    {
+        private KeyboardService $paginationKeyboardService
+    ) {
     }
 
     public function __invoke(Nutgram $bot, ?string $page = null): void
     {
         $currentPage = $page !== null ? (int)$page : 1;
 
-        $result = ($this->listAvailableBooksUseCase)(new ListBooksRequestDTO(
-            page: $currentPage,
-            limit: self::PER_PAGE,
-        ));
+        $result = ($this->listAvailableBooksUseCase)(
+            new ListBooksRequestDTO(
+                page: $currentPage,
+                limit: self::PER_PAGE,
+            )
+        );
 
         $text = $this->formatBooksList($result->books, $currentPage);
 

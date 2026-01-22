@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Dinargab\LibraryBot\Infrastructure\Parsers;
@@ -14,9 +15,7 @@ class ChitayGorodParser implements BookParserInterface
 {
     public function __construct(
         private readonly HttpClientInterface $httpClient,
-    )
-    {
-
+    ) {
     }
 
     public function parseBookContent(string $url): ParsedBookDTO
@@ -31,9 +30,9 @@ class ChitayGorodParser implements BookParserInterface
         $xpath = new DOMXPath($dom);
         // Получаем все данные
         $description = $this->getDescription($xpath);
-        $title = $this->getTitle($xpath);
-        $author = $this->getAuthors($xpath);
-        $isbn = $this->getIsbn($xpath);
+        $title       = $this->getTitle($xpath);
+        $author      = $this->getAuthors($xpath);
+        $isbn        = $this->getIsbn($xpath);
 
         return new ParsedBookDTO(
             title: $title,
@@ -48,10 +47,11 @@ class ChitayGorodParser implements BookParserInterface
     private function getIsbn(DOMXPath $xpath)
     {
         $elements = $xpath->query('//span[@itemprop="isbn"]');
-        $isbn = "";
+        $isbn     = "";
         if ($elements && $elements->length > 0) {
             $isbn = $elements->item(0)->textContent;
         }
+
         return $isbn;
     }
 
@@ -63,24 +63,26 @@ class ChitayGorodParser implements BookParserInterface
         if ($elements && $elements->length > 0) {
             $title = $elements->item(0)->textContent;
         }
+
         return $title;
     }
 
     private function getDescription(DOMXPath $xpath): string
     {
-        $elements = $xpath->query("//div[contains(@class, 'product-description-short__text')]");
+        $elements    = $xpath->query("//div[contains(@class, 'product-description-short__text')]");
         $description = "";
         if ($elements && $elements->length > 0) {
             $firstElement = $elements->item(0);
-            $description = $firstElement->textContent;
+            $description  = $firstElement->textContent;
         }
+
         return $description;
     }
 
     private function getAuthors(DOMXPath $xpath): string
     {
         $elements = $xpath->query("//li[contains(@class, 'product-authors__link')]");
-        $authors = [];
+        $authors  = [];
         foreach ($elements as $element) {
             $authors[] = $element->textContent;
         }

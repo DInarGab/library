@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Dinargab\LibraryBot\Application\Book\Factory;
@@ -13,8 +14,7 @@ class BookCopyFactory implements BookCopyFactoryInterface
         Book $book,
         ?string $inventoryNumber = null,
         string $condition = 'good'
-    ): BookCopy
-    {
+    ): BookCopy {
         return new BookCopy(
             book: $book,
             inventoryNumber: $inventoryNumber,

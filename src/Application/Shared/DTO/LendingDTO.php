@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Dinargab\LibraryBot\Application\Shared\DTO;
@@ -20,7 +21,8 @@ class LendingDTO
         public int $daysUntilDue,
         public bool $isOverdue,
         public string $statusDisplayValue,
-    ) {}
+    ) {
+    }
 
     public static function fromEntity(Lending $lending): self
     {

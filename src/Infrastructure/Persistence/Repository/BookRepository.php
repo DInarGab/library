@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Dinargab\LibraryBot\Infrastructure\Persistence\Repository;
@@ -14,15 +15,15 @@ class BookRepository extends ServiceEntityRepository implements BookRepositoryIn
 {
 
     public function __construct(
-        ManagerRegistry                $registry,
+        ManagerRegistry $registry,
         private EntityManagerInterface $entityManager
-    )
-    {
+    ) {
         parent::__construct($registry, Book::class);
     }
 
     /**
      * @param int $id
+     *
      * @return Book|null
      */
     public function findById(int $id): ?Book
@@ -33,14 +34,13 @@ class BookRepository extends ServiceEntityRepository implements BookRepositoryIn
 
     public function findAll(int $page = 1, int $limit = 10): array
     {
-
         return $this->createQueryBuilder("book")
-            ->select("book")
-            ->orderBy("book.id", "DESC")
-            ->setMaxResults($limit)
-            ->setFirstResult($this->getOffset($page, $limit))
-            ->getQuery()
-            ->getResult();
+                    ->select("book")
+                    ->orderBy("book.id", "DESC")
+                    ->setMaxResults($limit)
+                    ->setFirstResult($this->getOffset($page, $limit))
+                    ->getQuery()
+                    ->getResult();
     }
 
     public function getCount(): int
@@ -51,15 +51,15 @@ class BookRepository extends ServiceEntityRepository implements BookRepositoryIn
     public function findAvailable(int $page = 1, int $limit = 10): array
     {
         return $this->createQueryBuilder("book")
-            ->select("book")
-            ->join("book.copies", "copies")
-            ->where('copies.status = :status')
-            ->setParameter('status', 'available')
-            ->orderBy("book.id", "DESC")
-            ->setMaxResults($limit)
-            ->setFirstResult($this->getOffset($page, $limit))
-            ->getQuery()
-            ->getResult();
+                    ->select("book")
+                    ->join("book.copies", "copies")
+                    ->where('copies.status = :status')
+                    ->setParameter('status', 'available')
+                    ->orderBy("book.id", "DESC")
+                    ->setMaxResults($limit)
+                    ->setFirstResult($this->getOffset($page, $limit))
+                    ->getQuery()
+                    ->getResult();
     }
 
     public function findAddedAfter(DateTimeImmutable $date): array

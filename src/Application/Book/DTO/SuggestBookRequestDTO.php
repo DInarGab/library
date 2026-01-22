@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Dinargab\LibraryBot\Application\Book\DTO;
@@ -13,6 +14,5 @@ class SuggestBookRequestDTO
         public readonly string $author,
         public readonly ?string $comment,
     ) {
-
     }
 }

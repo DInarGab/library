@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Dinargab\LibraryBot\Infrastructure\Event\Observer;
@@ -18,7 +19,8 @@ class MessengerEventObserver implements EventObserverInterface
 {
     public function __construct(
         private readonly MessageBusInterface $messageBus
-    ) {}
+    ) {
+    }
 
     public function getSubscribedEvents(): array
     {

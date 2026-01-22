@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Dinargab\LibraryBot\Application\Book\UseCase;
@@ -16,17 +17,16 @@ class SuggestionProcessingUseCase
     public function __construct(
         private BookSuggestionRepositoryInterface $bookSuggestionRepository,
         private EventDispatcherInterface $eventDispatcher
-    )
-    {
-
+    ) {
     }
 
     public function __invoke(
         SuggestionProcessingRequestDTO $suggestionRequestDTO
-    )
-    {
+    ) {
         return match ($suggestionRequestDTO->suggestionStatus) {
-            BookSuggestionStatus::REJECTED, BookSuggestionStatus::APPROVED => $this->processSuggestion($suggestionRequestDTO),
+            BookSuggestionStatus::REJECTED, BookSuggestionStatus::APPROVED => $this->processSuggestion(
+                $suggestionRequestDTO
+            ),
             default => throw new InvalidArgumentException('Invalid suggestion status')
         };
     }
@@ -41,14 +41,17 @@ class SuggestionProcessingUseCase
         $this->bookSuggestionRepository->save($suggestion);
 
         //Событие
-        $this->eventDispatcher->dispatch(new SuggestionProcessedEvent(
-            $suggestion->getUser()->getTelegramId()->getValue(),
-            $suggestion->getAuthor(),
-            $suggestion->getTitle(),
-            $suggestion->getSourceUrl(),
-            $suggestionRequestDTO->suggestionStatus === BookSuggestionStatus::APPROVED,
-            $suggestion->getAdminComment()
-        ));
+        $this->eventDispatcher->dispatch(
+            new SuggestionProcessedEvent(
+                $suggestion->getUser()->getTelegramId()->getValue(),
+                $suggestion->getAuthor(),
+                $suggestion->getTitle(),
+                $suggestion->getSourceUrl(),
+                $suggestionRequestDTO->suggestionStatus === BookSuggestionStatus::APPROVED,
+                $suggestion->getAdminComment()
+            )
+        );
+
         return SuggestionDTO::fromEntity($suggestion);
     }
 }

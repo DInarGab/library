@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Dinargab\LibraryBot\Infrastructure\Console;
@@ -24,21 +25,21 @@ class CheckOverdueLendingsCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-
         /** @var array<LendingDTO> $overdueLendings */
         $overdueLendings = ($this->getOverdueLendingsUseCase)();
 
         $output->writeln(sprintf('Нашел %d просроченных выдач', count($overdueLendings)));
 
         foreach ($overdueLendings as $lending) {
-
-            $output->writeln(sprintf(
-                '  - Книга #%d: %s - %s (просрочена на %d дней/дня)',
-                $lending->id,
-                $lending->bookAuthor,
-                $lending->bookTitle,
-                $lending->daysUntilDue
-            ));
+            $output->writeln(
+                sprintf(
+                    '  - Книга #%d: %s - %s (просрочена на %d дней/дня)',
+                    $lending->id,
+                    $lending->bookAuthor,
+                    $lending->bookTitle,
+                    $lending->daysUntilDue
+                )
+            );
         }
 
         return Command::SUCCESS;

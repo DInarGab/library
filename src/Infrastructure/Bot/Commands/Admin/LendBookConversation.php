@@ -32,7 +32,7 @@ class LendBookConversation extends BaseConversation
     public const USERS_PAGE_PREFIX = 'lend_users_page';
 
     private const LENDING_PERIODS = [
-        7 => '1 неделя',
+        7  => '1 неделя',
         14 => '2 недели',
         21 => '3 недели',
         30 => '1 месяц',
@@ -48,30 +48,30 @@ class LendBookConversation extends BaseConversation
     public ?BookDTO $bookDTO = null;
 
     public function __construct(
-        private readonly GetBookUseCase      $getBookUseCase,
+        private readonly GetBookUseCase $getBookUseCase,
         private readonly GetUsersListUseCase $getUsersListUseCase,
-        private readonly LendBookUseCase     $issueBookUseCase,
-        private readonly GetUserInfoUseCase  $getUserInfoUseCase,
-        protected KeyboardService            $keyboardService,
-    )
-    {
+        private readonly LendBookUseCase $issueBookUseCase,
+        private readonly GetUserInfoUseCase $getUserInfoUseCase,
+        protected KeyboardService $keyboardService,
+    ) {
         parent::__construct($this->keyboardService);
     }
 
     public function start(Nutgram $bot, string $bookId): void
     {
-
         $this->bookId = (int)$bookId;
         try {
             $book = $this->getBook();
         } catch (BookNotFoundException $exception) {
             $this->editOrSendMessage($bot, $exception->getMessage());
             $this->end();
+
             return;
         }
         if ($book->availableCopies <= 0) {
             $this->editOrSendMessage($bot, 'Нет доступных для выдачи копий');
             $this->end();
+
             return;
         }
 
@@ -86,7 +86,7 @@ class LendBookConversation extends BaseConversation
     {
         $callbackData = $bot->callbackQuery()?->data;
 
-        if (!$callbackData) {
+        if ( ! $callbackData) {
             return;
         }
         $bot->answerCallbackQuery();
@@ -100,7 +100,6 @@ class LendBookConversation extends BaseConversation
             => $this->end(),
             default => null,
         };
-
     }
 
     private function handleUserSelected(Nutgram $bot, string $callbackData): void
@@ -121,6 +120,7 @@ class LendBookConversation extends BaseConversation
                 "Нет пользователей для выдачи"
             );
             $this->end();
+
             return;
         }
 
@@ -160,7 +160,7 @@ class LendBookConversation extends BaseConversation
             closeCallback: 'close',
             additionalButtons: $this->createPeriodButtons()
         );
-        $text = "*Выдача книги*\n\n Пользователь выбран\n\n *Выберите срок выдачи:*";
+        $text     = "*Выдача книги*\n\n Пользователь выбран\n\n *Выберите срок выдачи:*";
 
         $this->editOrSendMessage($bot, $text, $keyboard);
         $this->next('handlePeriodSelection');
@@ -175,6 +175,7 @@ class LendBookConversation extends BaseConversation
                 callback_data: self::SELECT_PERIOD_PREFIX . ":{$days}"
             );
         }
+
         return $buttons;
     }
 
@@ -182,7 +183,7 @@ class LendBookConversation extends BaseConversation
     {
         $callbackData = $bot->callbackQuery()?->data;
 
-        if (!$callbackData) {
+        if ( ! $callbackData) {
             return;
         }
         $bot->answerCallbackQuery();
@@ -199,7 +200,6 @@ class LendBookConversation extends BaseConversation
         if ($callbackData === 'cancel') {
             $this->end();
         }
-
     }
 
     protected function getConfirmationData(): array
@@ -208,11 +208,11 @@ class LendBookConversation extends BaseConversation
         $user = ($this->getUserInfoUseCase)(new GetUserInfoRequestDTO($this->selectedUserId));
 
         return [
-            'Книга' => $book->title,
-            'Автор' => $book->author,
+            'Книга'        => $book->title,
+            'Автор'        => $book->author,
             'Пользователь' => $user->displayName,
-            'Username' => $user->username ? "@{$user->username}" : null,
-            'Срок' => self::LENDING_PERIODS[$this->selectedDays],
+            'Username'     => $user->username ? "@{$user->username}" : null,
+            'Срок'         => self::LENDING_PERIODS[$this->selectedDays],
         ];
     }
 
@@ -240,15 +240,18 @@ class LendBookConversation extends BaseConversation
     private function showSuccessMessage(Nutgram $bot, LendingDTO $lending): void
     {
         $text = "*Книга успешно выдана!*\n\n"
-            . "*Книга:* {$lending->bookTitle}\n"
-            . "*Пользователь:* {$lending->userName}\n"
-            . "*Дата выдачи:* {$lending->issuedAt}\n"
-            . "*Вернуть до:* {$lending->dueDate}\n";
+                . "*Книга:* {$lending->bookTitle}\n"
+                . "*Пользователь:* {$lending->userName}\n"
+                . "*Дата выдачи:* {$lending->issuedAt}\n"
+                . "*Вернуть до:* {$lending->dueDate}\n";
 
         $keyboard = InlineKeyboardMarkup::make()
-            ->addRow(
-                InlineKeyboardButton::make('К списку книг', callback_data: ListBooksCommand::COMMAND_PREFIX . ':1')
-            );
+                                        ->addRow(
+                                            InlineKeyboardButton::make(
+                                                'К списку книг',
+                                                callback_data: ListBooksCommand::COMMAND_PREFIX . ':1'
+                                            )
+                                        );
 
         $this->editOrSendMessage($bot, $text, $keyboard);
     }
@@ -258,12 +261,15 @@ class LendBookConversation extends BaseConversation
         $text = "*Ошибка:* {$e->getMessage()}";
 
         $keyboard = InlineKeyboardMarkup::make()
-            ->addRow(
-                InlineKeyboardButton::make('Попробовать снова', callback_data: self::CALLBACK_PREFIX . ":{$this->bookId}")
-            )
-            ->addRow(
-                InlineKeyboardButton::make('Закрыть', callback_data: 'close')
-            );
+                                        ->addRow(
+                                            InlineKeyboardButton::make(
+                                                'Попробовать снова',
+                                                callback_data: self::CALLBACK_PREFIX . ":{$this->bookId}"
+                                            )
+                                        )
+                                        ->addRow(
+                                            InlineKeyboardButton::make('Закрыть', callback_data: 'close')
+                                        );
 
         $this->editOrSendMessage($bot, $text, $keyboard);
     }
@@ -271,10 +277,11 @@ class LendBookConversation extends BaseConversation
     private function formatBookInfo(): string
     {
         $book = $this->bookDTO;
+
         return "*Книга*\n\n"
-            . "*\"$book->title\"*\n"
-            . "$book->author\n"
-            . "Доступно копий: $book->availableCopies";
+               . "*\"$book->title\"*\n"
+               . "$book->author\n"
+               . "Доступно копий: $book->availableCopies";
     }
 
     protected function getCallbackPrefix(): string
@@ -284,10 +291,10 @@ class LendBookConversation extends BaseConversation
 
     protected function resetState(): void
     {
-        $this->bookId = null;
+        $this->bookId         = null;
         $this->selectedUserId = null;
-        $this->selectedDays = null;
-        $this->bookDTO = null;
+        $this->selectedDays   = null;
+        $this->bookDTO        = null;
     }
 
     private function getBook(): ?BookDTO
@@ -295,6 +302,7 @@ class LendBookConversation extends BaseConversation
         if (is_null($this->bookDTO) && $this->bookId !== null) {
             $this->bookDTO = ($this->getBookUseCase)(new GetBookRequestDTO($this->bookId));
         }
+
         return $this->bookDTO;
     }
 }

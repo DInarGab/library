@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Dinargab\LibraryBot\Infrastructure\Console;
@@ -19,10 +20,10 @@ class NotifyDeadLine extends Command
 
     public function __construct(
         public NotifyBeforeDeadlineUseCase $notifyBeforeDeadlineUseCase,
-    )
-    {
+    ) {
         parent::__construct();
     }
+
     public function __invoke(InputInterface $input, OutputInterface $output): int
     {
         $lendingsResponse = ($this->notifyBeforeDeadlineUseCase)();
@@ -30,15 +31,18 @@ class NotifyDeadLine extends Command
         $output->writeln(sprintf('Нашел %d выдач, которые подходят к концу', count($lendingsResponse->lendingsDto)));
 
         foreach ($lendingsResponse->lendingsDto as $lending) {
-            /** @var LendingDTO $lending*/
-            $output->writeln(sprintf(
-                '  - Книга #%d: %s - %s (подходит к сроку возврата, должны вернуть через %d)',
-                $lending->id,
-                $lending->bookAuthor,
-                $lending->bookTitle,
-                $lending->daysUntilDue
-            ));
+            /** @var LendingDTO $lending */
+            $output->writeln(
+                sprintf(
+                    '  - Книга #%d: %s - %s (подходит к сроку возврата, должны вернуть через %d)',
+                    $lending->id,
+                    $lending->bookAuthor,
+                    $lending->bookTitle,
+                    $lending->daysUntilDue
+                )
+            );
         }
+
         return Command::SUCCESS;
     }
 }

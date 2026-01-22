@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Dinargab\LibraryBot\Application\Book\UseCase;
@@ -12,7 +13,8 @@ class GetBookUseCase
 {
     public function __construct(
         private BookRepositoryInterface $bookRepository
-    ) {}
+    ) {
+    }
 
     public function __invoke(GetBookRequestDTO $bookRequestDTO): BookDTO
     {

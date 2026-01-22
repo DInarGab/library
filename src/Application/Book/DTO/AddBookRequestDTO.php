@@ -1,9 +1,8 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Dinargab\LibraryBot\Application\Book\DTO;
-
-use Dinargab\LibraryBot\Domain\Book\ValueObject\ISBN;
 
 class AddBookRequestDTO
 {
@@ -14,5 +13,6 @@ class AddBookRequestDTO
         public readonly string $isbn = '',
         public readonly ?string $description = null,
         public readonly ?string $coverUrl = null
-    ) {}
+    ) {
+    }
 }

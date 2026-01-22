@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Dinargab\LibraryBot\Infrastructure\Persistence\Repository;
@@ -13,8 +14,7 @@ class UserRepository extends ServiceEntityRepository implements UserRepositoryIn
 
     public function __construct(
         ManagerRegistry $registry,
-    )
-    {
+    ) {
         parent::__construct($registry, User::class);
     }
 
@@ -31,11 +31,11 @@ class UserRepository extends ServiceEntityRepository implements UserRepositoryIn
     public function findAll(int $page = 1, int $limit = 10): array
     {
         return $this->createQueryBuilder('user')
-            ->setFirstResult(($page - 1) * $limit)
-            ->orderBy("user.id", "DESC")
-            ->setMaxResults($limit)
-            ->getQuery()
-            ->getResult();
+                    ->setFirstResult(($page - 1) * $limit)
+                    ->orderBy("user.id", "DESC")
+                    ->setMaxResults($limit)
+                    ->getQuery()
+                    ->getResult();
     }
 
     public function getCount(): int

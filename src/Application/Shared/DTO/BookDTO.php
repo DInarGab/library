@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Dinargab\LibraryBot\Application\Shared\DTO;
@@ -17,7 +18,8 @@ class BookDTO
         public int $availableCopies,
         public string $createdAt,
         public ?int $firstAvailableCopyId,
-    ) {}
+    ) {
+    }
 
     public static function fromEntity(Book $book): self
     {

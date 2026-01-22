@@ -1,17 +1,16 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Dinargab\LibraryBot\Domain\Book\Entity;
 
 use DateTimeImmutable;
 use Dinargab\LibraryBot\Domain\Book\ValueObject\ISBN;
-use Dinargab\LibraryBot\Domain\Event\Events\DomainEventInterface;
 use Dinargab\LibraryBot\Domain\Event\EventSubjectInterface;
 use Dinargab\LibraryBot\Infrastructure\Persistence\Repository\BookRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use SplObjectStorage;
 
 
 #[ORM\Entity(repositoryClass: BookRepository::class)]
@@ -46,13 +45,13 @@ class Book
         ?string $description = null,
         ?string $coverUrl = null
     ) {
-        $this->title = $title;
-        $this->author = $author;
-        $this->isbn = $isbn ? new ISBN($isbn) : null;
+        $this->title       = $title;
+        $this->author      = $author;
+        $this->isbn        = $isbn ? new ISBN($isbn) : null;
         $this->description = $description;
-        $this->coverUrl = $coverUrl;
-        $this->createdAt = new DateTimeImmutable();
-        $this->copies = new ArrayCollection();
+        $this->coverUrl    = $coverUrl;
+        $this->createdAt   = new DateTimeImmutable();
+        $this->copies      = new ArrayCollection();
     }
 
     public function getId(): int
@@ -98,7 +97,7 @@ class Book
 
     public function addCopy(BookCopy $copy): void
     {
-        if (!$this->copies->contains($copy)) {
+        if ( ! $this->copies->contains($copy)) {
             $this->copies->add($copy);
         }
     }
@@ -127,6 +126,7 @@ class Book
                 return $copy;
             }
         }
+
         return null;
     }
 
@@ -137,11 +137,11 @@ class Book
         ?string $description = null,
         ?string $coverUrl = null
     ): void {
-        $this->title = $title;
-        $this->author = $author;
-        $this->isbn = $isbn ? new ISBN($isbn) : null;
+        $this->title       = $title;
+        $this->author      = $author;
+        $this->isbn        = $isbn ? new ISBN($isbn) : null;
         $this->description = $description;
-        $this->coverUrl = $coverUrl;
+        $this->coverUrl    = $coverUrl;
     }
 
     public function getDisplayName(): string

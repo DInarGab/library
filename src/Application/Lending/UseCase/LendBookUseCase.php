@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Dinargab\LibraryBot\Application\Lending\UseCase;
@@ -15,7 +16,6 @@ use Dinargab\LibraryBot\Domain\Exception\UserNotFoundException;
 use Dinargab\LibraryBot\Domain\Lending\Factory\LendingFactoryInterface;
 use Dinargab\LibraryBot\Domain\Lending\Repository\LendingRepositoryInterface;
 use Dinargab\LibraryBot\Domain\User\Repository\UserRepositoryInterface;
-use Dinargab\LibraryBot\Infrastructure\Persistence\Repository\BookCopyRepository;
 
 class LendBookUseCase
 {
@@ -29,7 +29,8 @@ class LendBookUseCase
         private LendingFactoryInterface $lendingFactory,
         private BookCopyRepositoryInterface $bookCopyRepository,
         private EventDispatcherInterface $eventDispatcher
-    ) {}
+    ) {
+    }
 
     public function __invoke(
         LendingRequestDTO $lendingRequestDTO,
@@ -63,16 +64,19 @@ class LendBookUseCase
         $availableCopy->markAsBorrowed();
         $this->bookCopyRepository->save($availableCopy);
 
-        $this->eventDispatcher->dispatch(new BookLentEvent(
-            lendingId: $lending->getId(),
-            bookId: $availableCopy->getBook()->getId(),
-            bookAuthor: $availableCopy->getBook()->getAuthor(),
-            bookTitle: $availableCopy->getBook()->getTitle(),
-            bookCopyId: $availableCopy->getId(),
-            inventoryNumber: $availableCopy->getInventoryNumber(),
-            userTelegramId: $user->getTelegramId()->getValue(),
-            dueDate: $lending->getDueDate()
-        ));
+        $this->eventDispatcher->dispatch(
+            new BookLentEvent(
+                lendingId: $lending->getId(),
+                bookId: $availableCopy->getBook()->getId(),
+                bookAuthor: $availableCopy->getBook()->getAuthor(),
+                bookTitle: $availableCopy->getBook()->getTitle(),
+                bookCopyId: $availableCopy->getId(),
+                inventoryNumber: $availableCopy->getInventoryNumber(),
+                userTelegramId: $user->getTelegramId()->getValue(),
+                dueDate: $lending->getDueDate()
+            )
+        );
+
         return LendingDTO::fromEntity($lending);
     }
 

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Dinargab\LibraryBot\Infrastructure\Event\Handlers;
@@ -12,7 +13,8 @@ class BookAddedHandler
 {
     public function __construct(
         private readonly NotificationServiceInterface $notificationService,
-    ) {}
+    ) {
+    }
 
     public function __invoke(BookAddedEvent $event): void
     {

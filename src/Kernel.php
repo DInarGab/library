@@ -22,7 +22,7 @@ class Kernel extends BaseKernel implements CompilerPassInterface
 
     public function process(ContainerBuilder $container): void
     {
-        if (!$container->has(EventDispatcherInterface::class)) {
+        if ( ! $container->has(EventDispatcherInterface::class)) {
             return;
         }
 

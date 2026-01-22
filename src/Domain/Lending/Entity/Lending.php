@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Dinargab\LibraryBot\Domain\Lending\Entity;
@@ -9,6 +10,7 @@ use Dinargab\LibraryBot\Domain\Lending\ValueObject\LendingStatus;
 use Dinargab\LibraryBot\Domain\User\Entity\User;
 use Dinargab\LibraryBot\Infrastructure\Persistence\Repository\LendingRepository;
 use Doctrine\ORM\Mapping as ORM;
+use DomainException;
 
 #[ORM\Entity(repositoryClass: LendingRepository::class)]
 class Lending
@@ -36,7 +38,6 @@ class Lending
     private LendingStatus $status;
 
     #[ORM\Column(type: 'datetime_immutable', name: "created_at", nullable: false)]
-
     private DateTimeImmutable $createdAt;
 
     public function __construct(
@@ -44,13 +45,13 @@ class Lending
         User $user,
         ?DateTimeImmutable $dueDate = null
     ) {
-        $this->bookCopy = $bookCopy;
-        $this->user = $user;
-        $this->issuedAt = new DateTimeImmutable();
-        $this->dueDate = $dueDate ?? $this->issuedAt->modify('+' . self::DEFAULT_LENDING_DAYS . ' days');
+        $this->bookCopy   = $bookCopy;
+        $this->user       = $user;
+        $this->issuedAt   = new DateTimeImmutable();
+        $this->dueDate    = $dueDate ?? $this->issuedAt->modify('+' . self::DEFAULT_LENDING_DAYS . ' days');
         $this->returnedAt = null;
-        $this->status = LendingStatus::LENT;
-        $this->createdAt = new DateTimeImmutable();
+        $this->status     = LendingStatus::LENT;
+        $this->createdAt  = new DateTimeImmutable();
     }
 
     public function getId(): int
@@ -104,7 +105,7 @@ class Lending
 
     public function getDaysUntilDue(): int
     {
-        $now = new DateTimeImmutable();
+        $now  = new DateTimeImmutable();
         $diff = $now->diff($this->dueDate);
 
         return $diff->invert ? -$diff->days : $diff->days;
@@ -112,12 +113,12 @@ class Lending
 
     public function return(): void
     {
-        if (!$this->status->canBeReturned()) {
-            throw new \DomainException('This lending cannot be returned');
+        if ( ! $this->status->canBeReturned()) {
+            throw new DomainException('This lending cannot be returned');
         }
 
         $this->returnedAt = new DateTimeImmutable();
-        $this->status = LendingStatus::RETURNED;
+        $this->status     = LendingStatus::RETURNED;
     }
 
     public function markAsOverdue(): void

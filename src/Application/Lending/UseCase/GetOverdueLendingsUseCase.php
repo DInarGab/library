@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Dinargab\LibraryBot\Application\Lending\UseCase;
@@ -13,7 +14,8 @@ class GetOverdueLendingsUseCase
     public function __construct(
         private LendingRepositoryInterface $lendingRepository,
         private EventDispatcherInterface $eventDispatcher,
-    ) {}
+    ) {
+    }
 
     public function __invoke(): array
     {
@@ -22,13 +24,15 @@ class GetOverdueLendingsUseCase
             $lending->markAsOverdue();
             $this->lendingRepository->save($lending);
 
-            $this->eventDispatcher->dispatch(new LendingOverdueEvent(
-                lendingId: $lending->getId(),
-                bookAuthor: $lending->getBookCopy()->getBook()->getAuthor(),
-                bookTitle: $lending->getBookCopy()->getBook()->getTitle(),
-                userTelegramId: (string) $lending->getUser()->getTelegramId(),
-                daysOverdue: abs($lending->getDaysUntilDue())
-            ));
+            $this->eventDispatcher->dispatch(
+                new LendingOverdueEvent(
+                    lendingId: $lending->getId(),
+                    bookAuthor: $lending->getBookCopy()->getBook()->getAuthor(),
+                    bookTitle: $lending->getBookCopy()->getBook()->getTitle(),
+                    userTelegramId: (string)$lending->getUser()->getTelegramId(),
+                    daysOverdue: abs($lending->getDaysUntilDue())
+                )
+            );
         }
 
         return array_map(

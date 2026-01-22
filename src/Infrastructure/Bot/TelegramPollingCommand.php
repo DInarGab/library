@@ -14,6 +14,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Throwable;
 
 #[AsCommand(
     name: 'telegram:polling',
@@ -40,10 +41,10 @@ class TelegramPollingCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $io = new SymfonyStyle($input, $output);
-        $timeout = (int) $input->getOption('timeout');
-        $limit = (int) $input->getOption('limit');
-        $direct = $input->getOption('direct');
+        $io      = new SymfonyStyle($input, $output);
+        $timeout = (int)$input->getOption('timeout');
+        $limit   = (int)$input->getOption('limit');
+        $direct  = $input->getOption('direct');
 
         // Обработка сигналов для graceful shutdown
         if (extension_loaded('pcntl')) {
@@ -56,7 +57,7 @@ class TelegramPollingCommand extends Command
 
         $offset = 0;
 
-        while (!$this->shouldStop) {
+        while ( ! $this->shouldStop) {
             try {
                 $updates = $this->bot->getUpdates(
                     offset: $offset,
@@ -75,8 +76,7 @@ class TelegramPollingCommand extends Command
                         $this->dispatchToQueue($update, $io);
                     }
                 }
-
-            } catch (\Throwable $e) {
+            } catch (Throwable $e) {
                 $io->error('Error: ' . $e->getMessage());
 
                 // Пауза перед повторной попыткой
@@ -85,6 +85,7 @@ class TelegramPollingCommand extends Command
         }
 
         $io->warning('Polling stopped gracefully');
+
         return Command::SUCCESS;
     }
 
@@ -97,22 +98,25 @@ class TelegramPollingCommand extends Command
 
         $this->messageBus->dispatch($message);
 
-        $io->writeln(sprintf(
-            '[%s] Update #%d queued',
-            date('H:i:s'),
-            $update->update_id
-        ));
-
+        $io->writeln(
+            sprintf(
+                '[%s] Update #%d queued',
+                date('H:i:s'),
+                $update->update_id
+            )
+        );
     }
 
     private function processDirectly(Update $update, SymfonyStyle $io): void
     {
         $this->bot->processUpdate($update);
 
-        $io->writeln(sprintf(
-            '[%s] Update #%d processed directly',
-            date('H:i:s'),
-            $update->update_id
-        ));
+        $io->writeln(
+            sprintf(
+                '[%s] Update #%d processed directly',
+                date('H:i:s'),
+                $update->update_id
+            )
+        );
     }
 }

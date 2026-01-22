@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Dinargab\LibraryBot\Infrastructure\Parsers;
@@ -15,9 +16,7 @@ class LabirintParser implements BookParserInterface
 
     public function __construct(
         private HttpClientInterface $httpClient,
-    )
-    {
-
+    ) {
     }
 
     public function parseBookContent(string $url): ParsedBookDTO
@@ -56,7 +55,7 @@ class LabirintParser implements BookParserInterface
         if ($elements && $elements->length > 0) {
             // Получаем первый найденный элемент
             $firstElement = $elements->item(0);
-            $description = $firstElement->textContent;
+            $description  = $firstElement->textContent;
         }
 
         return $description;
@@ -65,7 +64,7 @@ class LabirintParser implements BookParserInterface
     private function getTitleAndAuthor(DOMXPath $xpath): string
     {
         // Найти первый h1 на странице
-        $h1 = $xpath->query('//h1');
+        $h1     = $xpath->query('//h1');
         $h1Text = "";
         if ($h1->length > 0) {
             $h1Text = trim($h1->item(0)->textContent);
@@ -82,6 +81,7 @@ class LabirintParser implements BookParserInterface
         if ($meta->length > 0) {
             $isbn = trim($meta->item(0)->getAttribute('content'));
         }
+
         return $isbn;
     }
 

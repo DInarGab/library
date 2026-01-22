@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Dinargab\LibraryBot\Infrastructure\Notification;
@@ -12,21 +13,21 @@ class TelegramNotificationService implements NotificationServiceInterface
     public function __construct(
         private readonly Nutgram $bot,
         private readonly GetUsersListUseCase $getUsersListUseCase,
-    ) {}
+    ) {
+    }
 
     public function notifyUser(string $chatId, string $message): void
     {
         $this->bot->sendMessage(
             text: $message,
-            chat_id: (int) $chatId,
+            chat_id: (int)$chatId,
             parse_mode: "Markdown",
         );
-
     }
 
     public function notifyAllUsers(string $message): void
     {
-        $page = 1;
+        $page  = 1;
         $limit = 30;
         do {
             $usersList = ($this->getUsersListUseCase)(new GetUsersListRequestDTO($page, $limit));

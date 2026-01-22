@@ -1,12 +1,15 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Dinargab\LibraryBot\Domain\User\ValueObject;
 
 use Doctrine\ORM\Mapping as ORM;
+use InvalidArgumentException;
+use Stringable;
 
 #[ORM\Embeddable]
-readonly class TelegramId implements \Stringable
+readonly class TelegramId implements Stringable
 {
     #[ORM\Column(type: 'bigint', name: 'telegram_id', unique: true, nullable: false)]
     private string $value;
@@ -16,7 +19,7 @@ readonly class TelegramId implements \Stringable
     ) {
         $this->value = $value;
         if ($value <= 0) {
-            throw new \InvalidArgumentException('Telegram ID must be positive');
+            throw new InvalidArgumentException('Telegram ID must be positive');
         }
     }
 
@@ -32,6 +35,6 @@ readonly class TelegramId implements \Stringable
 
     public function __toString(): string
     {
-        return (string) $this->value;
+        return (string)$this->value;
     }
 }

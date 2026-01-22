@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Dinargab\LibraryBot\Infrastructure\Persistence\Repository;
@@ -14,10 +15,9 @@ class BookSuggestionRepository extends ServiceEntityRepository implements BookSu
 {
 
     public function __construct(
-        ManagerRegistry                $registry,
+        ManagerRegistry $registry,
         private EntityManagerInterface $entityManager
-    )
-    {
+    ) {
         parent::__construct($registry, BookSuggestion::class);
     }
 
@@ -30,24 +30,24 @@ class BookSuggestionRepository extends ServiceEntityRepository implements BookSu
     public function findPending(int $page, int $limit): array
     {
         return $this->createQueryBuilder('bookSuggestion')
-            ->where('bookSuggestion.status = :status')
-            ->leftJoin('bookSuggestion.user', 'user')
-            ->setParameter('status', BookSuggestionStatus::PENDING)
-            ->setFirstResult(($page - 1) * $limit)
-            ->setMaxResults($limit)
-            ->getQuery()
-            ->getResult();
+                    ->where('bookSuggestion.status = :status')
+                    ->leftJoin('bookSuggestion.user', 'user')
+                    ->setParameter('status', BookSuggestionStatus::PENDING)
+                    ->setFirstResult(($page - 1) * $limit)
+                    ->setMaxResults($limit)
+                    ->getQuery()
+                    ->getResult();
     }
 
     public function findByUser(int $userId, int $page, int $limit): array
     {
         return $this->createQueryBuilder('bookSuggestion')
-            ->where('bookSuggestion.userId = :userId')
-            ->setParameter('userId', $userId)
-            ->setFirstResult(($page - 1) * $limit)
-            ->setMaxResults($limit)
-            ->getQuery()
-            ->getResult();
+                    ->where('bookSuggestion.userId = :userId')
+                    ->setParameter('userId', $userId)
+                    ->setFirstResult(($page - 1) * $limit)
+                    ->setMaxResults($limit)
+                    ->getQuery()
+                    ->getResult();
     }
 
     public function findAll(): array

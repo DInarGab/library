@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Dinargab\LibraryBot\Application\User\DTO;
@@ -12,8 +13,6 @@ class GetOrCreateUserRequestDTO
         public readonly ?string $lastName = null,
         public readonly ?bool $isAdmin = false,
         public readonly ?bool $dontCreateOnFail = false,
-    )
-    {
-
+    ) {
     }
 }

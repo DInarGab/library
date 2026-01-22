@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Dinargab\LibraryBot\Application\Book\UseCase;
@@ -19,18 +20,17 @@ class SuggestBookUseCase
         private BookSuggestionRepositoryInterface $suggestionRepository,
         private UserRepositoryInterface $userRepository,
         private EventDispatcherInterface $eventDispatcher,
-    ) {}
+    ) {
+    }
 
     public function __invoke(
         SuggestBookRequestDTO $suggestBookRequestDTO
-    )
-    {
+    ) {
         $user = $this->userRepository->findById($suggestBookRequestDTO->userId);
 
         if ($user === null) {
             throw new UserNotFoundException("User not found");
         }
-
 
 
         $suggestion = new BookSuggestion(
@@ -43,13 +43,16 @@ class SuggestBookUseCase
         );
 
         $this->suggestionRepository->save($suggestion);
-        $this->eventDispatcher->dispatch(new SuggestionAddedEvent(
-            $suggestion->getAuthor(),
-            $suggestion->getTitle(),
-            $suggestion->getUser()->getDisplayName(),
-            $suggestion->getComment(),
-            $suggestion->getSourceUrl()
-        ));
+        $this->eventDispatcher->dispatch(
+            new SuggestionAddedEvent(
+                $suggestion->getAuthor(),
+                $suggestion->getTitle(),
+                $suggestion->getUser()->getDisplayName(),
+                $suggestion->getComment(),
+                $suggestion->getSourceUrl()
+            )
+        );
+
         return SuggestionDTO::fromEntity($suggestion);
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Dinargab\LibraryBot\Application\Book\UseCase;
@@ -12,20 +13,17 @@ class GetSuggestionUseCase
 {
     public function __construct(
         private BookSuggestionRepository $bookSuggestionRepository,
-    )
-    {
-
+    ) {
     }
 
     public function __invoke(
         GetSuggestionRequestDTO $getSuggestionRequestDTO,
-    ): ?SuggestionDTO
-    {
+    ): ?SuggestionDTO {
         $suggestionInfo = $this->bookSuggestionRepository->findById($getSuggestionRequestDTO->suggestionId);
         if ($suggestionInfo === null) {
             throw new BookSuggestionNotFoundException("Suggestion not found");
         }
-        return SuggestionDTO::fromEntity($suggestionInfo);
 
+        return SuggestionDTO::fromEntity($suggestionInfo);
     }
 }
