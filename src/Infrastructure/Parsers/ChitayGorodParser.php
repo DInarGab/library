@@ -5,44 +5,13 @@ declare(strict_types=1);
 namespace Dinargab\LibraryBot\Infrastructure\Parsers;
 
 use Dinargab\LibraryBot\Application\Shared\DTO\ParsedBookDTO;
-use Dinargab\LibraryBot\Domain\Service\BookParserInterface;
-use DOMDocument;
 use DOMXPath;
-use InvalidArgumentException;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-class ChitayGorodParser implements BookParserInterface
+class ChitayGorodParser extends AbstractParser
 {
-    public function __construct(
-        private readonly HttpClientInterface $httpClient,
-    ) {
-    }
 
-    public function parseBookContent(string $url): ParsedBookDTO
-    {
-        if (filter_var($url, FILTER_VALIDATE_URL) === false) {
-            throw new InvalidArgumentException("Invalid URL");
-        }
-        $response = $this->httpClient->request('GET', $url);
-
-        $dom = new DOMDocument();
-        @$dom->loadHTML($response->getContent());
-        $xpath = new DOMXPath($dom);
-        // Получаем все данные
-        $description = $this->getDescription($xpath);
-        $title       = $this->getTitle($xpath);
-        $author      = $this->getAuthors($xpath);
-        $isbn        = $this->getIsbn($xpath);
-
-        return new ParsedBookDTO(
-            title: $title,
-            author: $author,
-            description: $description,
-            isbn: $isbn,
-            url: $url,
-        );
-    }
-
+    public const SUPPORTED_HOST = 'chitai-gorod.ru';
+    private const SUPPORTED_PATH = 'product';
 
     private function getIsbn(DOMXPath $xpath)
     {
@@ -88,5 +57,28 @@ class ChitayGorodParser implements BookParserInterface
         }
 
         return implode(", ", $authors);
+    }
+
+    protected function supports(string $url): bool
+    {
+        $urlPath = parse_url($url, PHP_URL_PATH);
+
+        return parent::supports($url) && str_contains($urlPath, self::SUPPORTED_PATH);
+    }
+
+
+    protected function extractBookData(DOMXPath $xpath, string $url): ParsedBookDTO
+    {
+        $title = $this->getTitle($xpath);
+        if (empty($title)) {
+            throw new \InvalidArgumentException('No parsable content on page');
+        }
+        return new ParsedBookDTO(
+            $this->getTitle($xpath),
+            $this->getDescription($xpath),
+            $url,
+            $this->getAuthors($xpath),
+            $this->getIsbn($xpath)
+        );
     }
 }

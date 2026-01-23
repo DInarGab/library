@@ -5,41 +5,27 @@ declare(strict_types=1);
 namespace Dinargab\LibraryBot\Infrastructure\Parsers;
 
 use Dinargab\LibraryBot\Application\Shared\DTO\ParsedBookDTO;
-use Dinargab\LibraryBot\Domain\Service\BookParserInterface;
-use DOMDocument;
 use DOMXPath;
-use InvalidArgumentException;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-class LabirintParser implements BookParserInterface
+class LabirintParser extends AbstractParser
 {
 
-    public function __construct(
-        private HttpClientInterface $httpClient,
-    ) {
-    }
-
-    public function parseBookContent(string $url): ParsedBookDTO
+    public const SUPPORTED_HOST = 'labirint.ru';
+    private const SUPPORTED_PATH = 'books';
+    protected function extractBookData(DOMXPath $xpath, string $url): ParsedBookDTO
     {
-        if (filter_var($url, FILTER_VALIDATE_URL) === false) {
-            throw new InvalidArgumentException("Invalid URL");
-        }
-        $response = $this->httpClient->request('GET', $url);
+        ['title' => $title, 'author' => $author] = $this->getTitleAndAuthor($xpath);
 
-        $dom = new DOMDocument();
-        @$dom->loadHTML($response->getContent());
-        $xpath = new DOMXPath($dom);
-        // Получаем все данные
-        $description = $this->getDescription($xpath);
-        [$title, $author] = explode(":", $this->getTitleAndAuthor($xpath));
-        $isbn = $this->getIsbn($xpath);
+        if (empty($title)) {
+            throw new \InvalidArgumentException('No parsable content on page');
+        }
 
         return new ParsedBookDTO(
-            title: $title,
-            author: $author,
-            description: $description,
-            isbn: $isbn,
-            url: $url,
+            $title,
+            $this->getDescription($xpath),
+            $url,
+            $author,
+            $this->getIsbn($xpath),
         );
     }
 
@@ -61,7 +47,7 @@ class LabirintParser implements BookParserInterface
         return $description;
     }
 
-    private function getTitleAndAuthor(DOMXPath $xpath): string
+    private function getTitleAndAuthor(DOMXPath $xpath): array
     {
         // Найти первый h1 на странице
         $h1     = $xpath->query('//h1');
@@ -70,7 +56,19 @@ class LabirintParser implements BookParserInterface
             $h1Text = trim($h1->item(0)->textContent);
         }
 
-        return $h1Text;
+        if (str_contains($h1Text, ':')) {
+            $parts = explode(':', $h1Text);
+
+            return [
+                "title"  => $parts[0],
+                'author' => $parts[1]
+            ];
+        }
+
+        return [
+            'title'  => $h1Text,
+            'author' => ''
+        ];
     }
 
 
@@ -80,9 +78,12 @@ class LabirintParser implements BookParserInterface
         $isbn = "";
         if ($meta->length > 0) {
             $isbn = trim($meta->item(0)->getAttribute('content'));
+            //Может быть список, берем первый
+            $isbn = explode(',', $isbn)[0];
         }
 
         return $isbn;
     }
+
 
 }
