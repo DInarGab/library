@@ -129,4 +129,11 @@ class Lending
 
         $this->status = LendingStatus::OVERDUE;
     }
+
+    public function setStatus(LendingStatus $status): Lending
+    {
+        $this->status = $status;
+
+        return $this;
+    }
 }

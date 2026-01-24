@@ -42,6 +42,7 @@ class SuggestBookConversation extends BaseConversation
         parent::__construct($this->keyboardService);
     }
 
+
     protected function getCallbackPrefix(): string
     {
         return self::COMMAND_PREFIX;
@@ -81,7 +82,7 @@ class SuggestBookConversation extends BaseConversation
         $this->resetState();
 
         $bot->sendMessage(
-            text: "📚 *Предложить книгу*\n\nВыберите способ добавления:",
+            text: "*Предложить книгу*\n\nВыберите способ добавления:",
             parse_mode: 'Markdown',
             reply_markup: InlineKeyboardMarkup::make()
                                               ->addRow($this->makeButton("По ссылке", self::TYPE_URL_CALLBACK))

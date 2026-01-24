@@ -2,10 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Dinargab\LibraryBot\Domain\Book;
+namespace Dinargab\LibraryBot\Application\Lending\UseCase;
 
 use Dinargab\LibraryBot\Application\Lending\DTO\GetLendingRequestDTO;
-use Dinargab\LibraryBot\Application\Lending\UseCase\Lend;
 use Dinargab\LibraryBot\Application\Shared\DTO\LendingDTO;
 use Dinargab\LibraryBot\Domain\Exception\LendingNotFoundException;
 use Dinargab\LibraryBot\Domain\Lending\Repository\LendingRepositoryInterface;

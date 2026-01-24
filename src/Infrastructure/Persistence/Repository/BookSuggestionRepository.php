@@ -42,7 +42,8 @@ class BookSuggestionRepository extends ServiceEntityRepository implements BookSu
     public function findByUser(int $userId, int $page, int $limit): array
     {
         return $this->createQueryBuilder('bookSuggestion')
-                    ->where('bookSuggestion.userId = :userId')
+                    ->join('bookSuggestion.user', 'u')
+                    ->where('u.id = :userId')
                     ->setParameter('userId', $userId)
                     ->setFirstResult(($page - 1) * $limit)
                     ->setMaxResults($limit)

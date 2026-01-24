@@ -127,14 +127,14 @@ abstract class BaseConversation extends Conversation
     {
         return InlineKeyboardButton::make(
             $text,
-            callback_data: $this->getCallbackPrefix() . "_{$action}"
+            callback_data: $this->getCallbackPrefix() . "_$action"
         );
     }
 
 
     protected function isCallbackAction(string $callbackData, string $action): bool
     {
-        return $callbackData === $this->getCallbackPrefix() . "_{$action}";
+        return $callbackData === $this->getCallbackPrefix() . "_$action";
     }
 
     /**

@@ -27,7 +27,7 @@ class ListSuggestionsUseCase
                 $bookSuggestionRequestDTO->page,
                 $bookSuggestionRequestDTO->limit
             );
-            $totalItems  = $this->bookSuggestionRepository->count(['userId' => $bookSuggestionRequestDTO->userId]);
+            $totalItems  = $this->bookSuggestionRepository->count(['user' => $bookSuggestionRequestDTO->userId]);
         } else {
             $suggestions = $this->bookSuggestionRepository->findPending(
                 $bookSuggestionRequestDTO->page,

@@ -16,7 +16,7 @@ class ListSuggestionsCommand
 
     public const COMMAND_PREFIX = "list_suggestions";
 
-    public const PER_PAGE = 10;
+    public const PER_PAGE = 5;
 
     public function __construct(
         private ListSuggestionsUseCase $listSuggestionsUseCase,
@@ -28,11 +28,12 @@ class ListSuggestionsCommand
     public function __invoke(Nutgram $bot, ?string $page = null): void
     {
         $currentPage = $page !== null ? (int)$page : 1;
-
+        $user = $bot->get('user');
         $result = ($this->listSuggestionsUseCase)(
             new ListSuggestionRequestDTO(
                 page: $currentPage,
                 limit: self::PER_PAGE,
+                userId: $user->isAdmin ? null: $user->id,
             )
         );
 

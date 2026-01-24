@@ -15,7 +15,7 @@ use SergiX44\Nutgram\Telegram\Types\Keyboard\InlineKeyboardButton;
 class ListLendingsCommand
 {
 
-    private const PER_PAGE = 5;
+    public const PER_PAGE = 5;
 
     public const COMMAND_PREFIX = "list_lendings";
 

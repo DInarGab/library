@@ -14,7 +14,7 @@ use SergiX44\Nutgram\Telegram\Types\Keyboard\InlineKeyboardButton;
 class ListBooksCommand
 {
     public const COMMAND_PREFIX = "list_books";
-    private const PER_PAGE = 5;
+    public const PER_PAGE = 5;
 
     public function __construct(
         private ListAvailableBooksUseCase $listAvailableBooksUseCase,

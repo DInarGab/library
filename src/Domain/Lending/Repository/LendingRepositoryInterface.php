@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Dinargab\LibraryBot\Domain\Lending\Repository;
 
-use Dinargab\LibraryBot\Domain\Book\Entity\BookCopy;
+use Dinargab\LibraryBot\Domain\Book\Entity\Book;
 use Dinargab\LibraryBot\Domain\Lending\Entity\Lending;
 use Dinargab\LibraryBot\Domain\User\Entity\User;
 
@@ -18,7 +18,7 @@ interface LendingRepositoryInterface
     /** @return Lending[] */
     public function findByUser(User $user): array;
 
-    public function findActiveByBookCopy(BookCopy $bookCopy): ?Lending;
+    public function findByBook(Book $book): array;
 
     /** @return Lending[] */
     public function findOverdue(): array;
@@ -39,6 +39,6 @@ interface LendingRepositoryInterface
 
     public function remove(Lending $lending): void;
 
-    public function countAll(int $userId = null): int;
+    public function countAll(?int $userId): int;
 
 }

@@ -21,7 +21,7 @@ class User
 
     #[ORM\Embedded(class: TelegramId::class, columnPrefix: "user_")]
     private TelegramId $telegramId;
-    #[ORM\Column(type: 'string', length: 255)]
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $username;
     #[ORM\Column(type: 'string', length: 255, name: 'first_name', nullable: true)]
     private ?string $firstName;
@@ -95,5 +95,12 @@ class User
         }
 
         return $this->username ?? "User #{$this->telegramId->getValue()}";
+    }
+
+    public function setUsername(string $username): User
+    {
+        $this->username = $username;
+
+        return $this;
     }
 }

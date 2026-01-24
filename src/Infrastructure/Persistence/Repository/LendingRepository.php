@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Dinargab\LibraryBot\Infrastructure\Persistence\Repository;
 
 use DateTimeImmutable;
-use Dinargab\LibraryBot\Domain\Book\Entity\BookCopy;
+use Dinargab\LibraryBot\Domain\Book\Entity\Book;
 use Dinargab\LibraryBot\Domain\Lending\Entity\Lending;
 use Dinargab\LibraryBot\Domain\Lending\Repository\LendingRepositoryInterface;
 use Dinargab\LibraryBot\Domain\User\Entity\User;
@@ -42,15 +42,15 @@ class LendingRepository extends ServiceEntityRepository implements LendingReposi
         return $this->findBy(['user' => $user], ['issuedAt' => 'DESC']);
     }
 
-    public function findActiveByBookCopy(BookCopy $bookCopy): ?Lending
+    public function findByBook(Book $book): array
     {
         return $this->createQueryBuilder('lending')
-                    ->andWhere('lending.bookCopy = :bookCopy')
-                    ->andWhere('lending.status IN (:activeStatuses)')
-                    ->setParameter('bookCopy', $bookCopy)
-                    ->setParameter('activeStatuses', ['active', 'overdue'])
+                    ->leftJoin('lending.bookCopy', 'bookCopy')
+                    ->leftJoin('bookCopy.book', 'book')
+                    ->andWhere('book = :book')
+                    ->setParameter('book', $book)
                     ->getQuery()
-                    ->getOneOrNullResult();
+                    ->getResult();
     }
 
     public function findOverdue(): array
@@ -164,7 +164,7 @@ class LendingRepository extends ServiceEntityRepository implements LendingReposi
         $this->getEntityManager()->flush();
     }
 
-    public function countAll($userId = null): int
+    public function countAll(?int $userId = null): int
     {
         if (is_null($userId)) {
             return $this->count([]);

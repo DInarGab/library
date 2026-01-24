@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Dinargab\LibraryBot\Infrastructure\Bot\Commands;
 
 use Dinargab\LibraryBot\Application\Lending\DTO\GetLendingRequestDTO;
+use Dinargab\LibraryBot\Application\Lending\UseCase\GetLendingUseCase;
 use Dinargab\LibraryBot\Application\Shared\DTO\LendingDTO;
 use Dinargab\LibraryBot\Application\Shared\DTO\UserDTO;
-use Dinargab\LibraryBot\Domain\Book\GetLendingUseCase;
 use Dinargab\LibraryBot\Domain\Exception\LendingNotFoundException;
 use Dinargab\LibraryBot\Domain\Lending\ValueObject\LendingStatus;
 use Dinargab\LibraryBot\Domain\User\Entity\User;

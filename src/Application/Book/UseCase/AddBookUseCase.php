@@ -48,7 +48,7 @@ class AddBookUseCase
                 $book->getTitle(),
                 $book->getAuthor(),
                 $book->getIsbn()->getValue(),
-                1,
+                $addBookRequestDTO->copies
             )
         );
 

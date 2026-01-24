@@ -31,14 +31,13 @@ class DeleteBookUseCase
             throw new BookNotFoundException("Книга с ID:$deleteBookRequestDTO->bookId не найдена");
         }
 
-        foreach ($book->getCopies() as $copy) {
-            $activeLending = $this->lendingRepository->findActiveByBookCopy($copy);
-            if ($activeLending !== null) {
-                throw new DomainException(
-                    "Невозможно удалить книгу '{$book->getTitle()}': есть выданные копии"
-                );
-            }
+        $lendings = $this->lendingRepository->findByBook($book);
+        if (!empty($lendings)) {
+            throw new DomainException(
+                "Невозможно удалить книгу '{$book->getTitle()}': есть история выдачи"
+            );
         }
+
 
         $bookTitle  = $book->getTitle();
         $bookAuthor = $book->getAuthor();

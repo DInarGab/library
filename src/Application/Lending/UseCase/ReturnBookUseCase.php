@@ -10,7 +10,7 @@ use Dinargab\LibraryBot\Application\Shared\DTO\LendingDTO;
 use Dinargab\LibraryBot\Domain\Event\EventDispatcherInterface;
 use Dinargab\LibraryBot\Domain\Event\Events\BookReturnedEvent;
 use Dinargab\LibraryBot\Domain\Lending\Repository\LendingRepositoryInterface;
-use DomainException;
+use InvalidArgumentException;
 
 class ReturnBookUseCase
 {
@@ -25,7 +25,7 @@ class ReturnBookUseCase
     ): LendingDTO {
         $lending = $this->lendingRepository->findById($returnBookRequestDTO->lendingId);
         if ($lending === null) {
-            throw new DomainException("Lending not found");
+            throw new InvalidArgumentException("Lending not found");
         }
 
         $bookCopy = $lending->getBookCopy();

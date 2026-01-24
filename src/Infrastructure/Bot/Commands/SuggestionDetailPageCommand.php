@@ -9,7 +9,7 @@ use Dinargab\LibraryBot\Application\Book\UseCase\GetSuggestionUseCase;
 use Dinargab\LibraryBot\Application\Shared\DTO\SuggestionDTO;
 use Dinargab\LibraryBot\Application\Shared\DTO\UserDTO;
 use Dinargab\LibraryBot\Domain\Book\ValueObject\BookSuggestionStatus;
-use Dinargab\LibraryBot\Domain\Exception\BookNotFoundException;
+use Dinargab\LibraryBot\Domain\Exception\BookSuggestionNotFoundException;
 use Dinargab\LibraryBot\Infrastructure\Bot\Commands\Admin\SuggestionProcessingCommand;
 use Dinargab\LibraryBot\Infrastructure\Bot\Service\KeyboardService;
 use SergiX44\Nutgram\Nutgram;
@@ -32,7 +32,7 @@ class SuggestionDetailPageCommand
         $this->bot = $bot;
         try {
             $bookDetail = ($this->getSuggestionUseCase)(new GetSuggestionRequestDTO((int)$suggestionId));
-        } catch (BookNotFoundException $exception) {
+        } catch (BookSuggestionNotFoundException $exception) {
             $bot->sendMessage('Предложение не найдено');
 
             return;

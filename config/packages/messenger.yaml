@@ -1,17 +1,6 @@
 framework:
     messenger:
         transports:
-#            telegram_updates:
-#                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
-#                options:
-#                    exchange:
-#                        name: telegram_updates
-#                        type: direct
-#                        default_publish_routing_key: telegram_update
-#                    queues:
-#                        telegram_updates_queue:
-#                            binding_keys:
-#                                - telegram_update
             async:
                 dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
                 retry_strategy:
@@ -29,3 +18,9 @@ framework:
             'Dinargab\LibraryBot\Domain\Event\Events\LendingDeadlineNearEvent': async
             'Dinargab\LibraryBot\Domain\Event\Events\SuggestionAddedEvent': async
             'Dinargab\LibraryBot\Domain\Event\Events\SuggestionProcessedEvent': async
+
+when@test:
+    framework:
+        messenger:
+            transports:
+                async: 'in-memory://'
